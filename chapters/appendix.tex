@@ -1,0 +1,58 @@
+\appendix
+\section{Inductive proof of equation~\ref{eq:explicitL}}\label{sect:genLProof}
+We will use the binomial coefficient identities ${k \choose n} = {k-1 \choose n} + {k-1 \choose n-1}$ and ${k \choose 0} = 1$ to prove that
+\begin{align}
+    \L_h &= \frac{1}{a}\sum_{i=0}^{N} r^{h-im}p^{i}{h-im-1 \choose i}, \quad \mbox{where } N = \left\lfloor{\frac{h-1}{m+1}}\right\rfloor\nonumber
+\end{align}
+is a solution to the recursion problem stated by eq\ref{eq:complexRecurrence2}.
+\begin{proof}
+If $0 < h \leq m+1$, then $N = 0$ and
+\begin{align}
+	\L_h &= \frac{1}{a}\sum_{i=0}^{0} r^{h-im}p^{i}{h-im-1 \choose i}\nonumber
+    = a^{-1}r^{h}{h-1 \choose 0}\nonumber
+         = a^{-1}r^{h}\nonumber
+\end{align}
+Therefore the statement holds for the initial condition.\\
+Assume that the statement is true for the $m+1$ consecutive elements $\L_{h-1-m},\ldots,\L_{h-1}$. Then
+\begin{align}
+	\L_h &= r\left(\overline{L}_{h-1} + p\overline{L}_{h-m-1}\right)\nonumber\\
+         &= r\left(\frac{1}{a}\sum_{i=0}^{\left\lfloor{\frac{(h-1)-1}{m+1}}\right\rfloor} r^{(h-1)-im}p^{i}{(h-1)-im-1 \choose i} +
+         p\frac{1}{a}\sum_{i=0}^{\left\lfloor{\frac{(h-1-m)-1}{m+1}}\right\rfloor} r^{(h-1-m)-im}p^{i}{(h-1-m)-im-1 \choose i}\right)\nonumber\\
+   \implies a\L_h &= r\sum_{i=0}^{\left\lfloor{\frac{h-2}{m+1}}\right\rfloor} r^{h-1-im}p^{i}{h-2-im \choose i} +
+         rp\sum_{i=0}^{\left\lfloor{\frac{h-1-(m+1)}{m+1}}\right\rfloor} r^{h-1-(i+1)m}p^{i}{h-2-(i+1)m \choose i}\nonumber\\
+         &= \sum_{i=0}^{\left\lfloor{\frac{h-2}{m+1}}\right\rfloor} r^{h-im}p^{i}{h-2-im \choose i} +
+         \sum_{i=0}^{\left\lfloor{\frac{h-1-(m+1)}{m+1}}\right\rfloor} r^{h-(i+1)m}p^{i+1}{h-2-(i+1)m \choose i}\nonumber\\
+         &= \sum_{i=0}^{\left\lfloor{\frac{h-2}{m+1}}\right\rfloor} r^{h-im}p^{i}{h-2-im \choose i} +
+         \sum_{i=0}^{\left\lfloor{\frac{h-1}{m+1}}\right\rfloor-1} r^{h-(i+1)m}p^{i+1}{h-2-(i+1)m \choose i}\label{eq:proofBranch}
+\end{align}
+If $h-1 = N(m+1)$, then $\left\lfloor{\frac{h-2}{m+1}}\right\rfloor = \left\lfloor{\frac{h-1}{m+1}}\right\rfloor-1 = N-1$. Now eq\ref{eq:proofBranch} reduces to
+\begin{align*}
+	a\L_h &= \sum_{i=0}^{N-1} r^{h-im}p^{i}{h-2-im \choose i} +
+         \sum_{i=0}^{N-1} r^{h-(i+1)m}p^{i+1}{h-2-(i+1)m \choose i}\\
+         &= \sum_{i=0}^{N-1} r^{h-im}p^{i}{h-2-im \choose i} +
+         \sum_{i=1}^{N} r^{h-im}p^{i}{h-2-im \choose i-1} \\
+         &= \sum_{i=1}^{N} r^{h-im}p^{i}\left({h-2-im \choose i} + {h-2-im \choose i-1}\right)
+         + r^{h}{h-2 \choose 0} - r^{h-Nm}p^{N}{h-2-Nm \choose N}\\
+         &= \sum_{i=1}^{N} r^{h-im}p^{i}{h-1-im \choose i} + r^h -
+         r^{N(m+1)+1-Nm}p^{N}{N(m+1)-1-Nm \choose N}\\
+         &= \sum_{i=1}^{N} r^{h-im}p^{i}{h-1-im \choose i} + r^{h-0m}p^0{h-1-0m \choose 0} -
+         r^{N+1}p^{N}\cancelto{0}{{N-1 \choose N}}\\
+         &= \sum_{i=0}^{N} r^{h-im}p^{i}{h-1-im \choose i}
+\end{align*}
+which is the required form.
+
+\noindent The other case to consider is $h-1 \neq N(m+1) \implies \left\lfloor{\frac{h-2}{m+1}}\right\rfloor = \left\lfloor{\frac{h-1}{m+1}}\right\rfloor = N$. In this case eq\ref{eq:proofBranch} gives
+\begin{align*}
+    a\L_h &= \sum_{i=0}^{N} r^{h-im}p^{i}{h-2-im \choose i} +
+          \sum_{i=0}^{N-1} r^{h-(i+1)m}p^{i+1}{h-2-(i+1)m \choose i}\\
+          &= \sum_{i=0}^{N} r^{h-im}p^{i}{h-2-im \choose i} +
+          \sum_{i=1}^{N} r^{h-im}p^{i}{h-2-im \choose i-1}\\
+          &= \sum_{i=1}^{N} r^{h-im}p^{i}\left({h-2-im \choose i} +
+          {h-2-im \choose i-1}\right) + r^{h-0m}p^{0}{h-2-0m \choose 0}\\
+          &= \sum_{i=1}^{N} r^{h-im}p^{i}{h-1-im \choose i} + r^{h-0m}p^{0}{h-1-0m \choose 0}\\
+          &= \sum_{i=0}^{N} r^{h-im}p^{i}{h-1-im \choose i}
+\end{align*}
+This covers all the cases. If the statement is true for $h \in \{k-m-1,\ldots,k-1\}$, it will also be true for $h = k$. Since we have shown that the statement holds for the initial condition ($0 < h \leq m+1$) it follows by induction that it holds for all $h > 0$.
+\end{proof}
+
+\input{chapters/regenderivation.tex}

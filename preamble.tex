@@ -1,0 +1,21 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{placeins}
+\usepackage{relsize,mathtools}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{ifthen}
+\usepackage{mathdots}
+\usepackage{amssymb}
+\usepackage{cancel}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage[top=0.7in, bottom=1in, left=1in, right=1in]{geometry}
+\renewcommand{\L}{\overline{L}}
+\renewcommand\Pr[1]{\begingroup
+    \renewcommand\mid{\;|\;}
+    \text{P({\larger[2]$\scriptstyle#1$})}
+    \endgroup}
+\newtheorem{claim}{Claim}
+\numberwithin{equation}{section}
+
