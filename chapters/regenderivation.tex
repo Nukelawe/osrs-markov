@@ -1,13 +1,28 @@
 \section{Derivation of the regenerative recurrence relations}\label{sect:regenRecurrenceDerivation}
+First, consider fights that do not start at full hitpoints, i.e. $j < h$. Then
 \begin{align}
-    \L_h
-		&= 1 + \sum_{i=1}^{h} p_{ih}\L_i\nonumber
-        = 1 + p_{1h}\L_1 + \sum_{i=2}^{h-1} p_{ih}\L_i + p_{hh}\L_h\nonumber\\
-        \implies (1-p_{hh})\L_h
-		&= 1 + p_{1h}\L_1 + \sum_{i=2}^{h-1} p_{ih}\L_i\nonumber\\
-        \implies (1-\Pr{X=0} - \rho \Pr{X=1})\L_h
-		&= 1 + (1-\rho)\Pr{X=h-1}\L_1
-	+ \sum_{i=2}^{h-1}((1-\rho)\Pr{X=h-i} + \rho\Pr{X=h-i+1})\L_i\nonumber
+	\langle L_{j-1} \rangle
+		&= 1 + \sum_{i=1}^{j} p_{i,j-1}\langle L_i\rangle\nonumber\\
+		&= 1 + \sum_{i=1}^{j-1} p_{i,j-1}\langle L_i\rangle + p_{j,j-1}\langle L_{j}\rangle\nonumber\\
+	\implies p_{j,j-1}\langle L_{j}\rangle
+		&= \langle L_{j-1} \rangle - 1 - \sum_{i=1}^{j-1} p_{i,j-1}\langle L_i\rangle\nonumber\\
+		&= (1 - p_{j-1,j-1})\langle L_{j-1} \rangle - 1 - \sum_{i=1}^{j-2} p_{i,j-1}\langle L_i\rangle\nonumber\\
+		&= 1 + \sum_{i=1}^{j} p_{ij}\langle L_i\rangle + p_{j+1,j}\left(1 + \sum_{i=1}^{j+2} p_{i,j+1}\langle L_i\rangle\right)\nonumber\\
+		&= 1 + p_{j+1,j} + \sum_{i=1}^{j} p_{ij}\langle L_i\rangle + p_{j+1,j}\sum_{i=1}^{j+2} p_{i,j+1}\langle L_i\rangle\nonumber\\
+		&= 1 + p_{j+1,j} + \sum_{i=1}^{j} \left(p_{ij} + p_{j+1,j}p_{i,j+1}\right)\langle L_i\rangle + p_{j+1,j}\sum_{i=j+1}^{j+2} p_{i,j+1}\langle L_i\rangle\nonumber\\
+		&= 1 + p_{1j}\langle L_1 \rangle + \sum_{i=2}^{h-1} p_{ij}\langle L_i \rangle + p_{hj}\langle L_h\rangle\nonumber\\
+		&= 1 + p_{1j}\langle L_1 \rangle + \sum_{i=2}^{h-1} p_{ij}\langle L_i \rangle + p_{hj}\langle L_h\rangle\nonumber\\
+\end{align}
+\begin{align}
+    \langle L_h \rangle
+		&= 1 + \sum_{i=1}^{h} p_{ih}\langle L_i\rangle\nonumber\\
+		&= 1 + \sum_{i=1}^{j+1} p_{ij}\langle L_i\rangle\nonumber\\
+		&= 1 + \sum_{i=1}^{j} p_{ij}\langle L_i\rangle + p_{j+1,j}\langle L_{j+1}\rangle\nonumber\\
+		&= 1 + \sum_{i=1}^{j} p_{ij}\langle L_i\rangle + p_{j+1,j}\left(1 + \sum_{i=1}^{j+2} p_{i,j+1}\langle L_i\rangle\right)\nonumber\\
+		&= 1 + p_{j+1,j} + \sum_{i=1}^{j} p_{ij}\langle L_i\rangle + p_{j+1,j}\sum_{i=1}^{j+2} p_{i,j+1}\langle L_i\rangle\nonumber\\
+		&= 1 + p_{j+1,j} + \sum_{i=1}^{j} \left(p_{ij} + p_{j+1,j}p_{i,j+1}\right)\langle L_i\rangle + p_{j+1,j}\sum_{i=j+1}^{j+2} p_{i,j+1}\langle L_i\rangle\nonumber\\
+		&= 1 + p_{1j}\langle L_1 \rangle + \sum_{i=2}^{h-1} p_{ij}\langle L_i \rangle + p_{hj}\langle L_h\rangle\nonumber\\
+		&= 1 + p_{1j}\langle L_1 \rangle + \sum_{i=2}^{h-1} p_{ij}\langle L_i \rangle + p_{hj}\langle L_h\rangle\nonumber\\
 \end{align}
 Next we insert the damage roll probabilities. They depend on the max hit so once again we treat the two cases $h \leq m$ and $h>m$. Recall also that $L_1 = \frac{m+1}{am}$.\\
 \textbf{Case} $h \leq m+1 \implies \Pr{X \geq h} = \frac{a}{m+1}(m-h+1)$.

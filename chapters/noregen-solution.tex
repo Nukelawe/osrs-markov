@@ -81,3 +81,13 @@ Since $i$ must also be an integer the index set becomes $\mathcal{I} = \left\{0,
 \end{align}
 Naturally this can also be proven to satisfy the recursion using induction (see Appendix~\ref{sect:genLProof}). With this result the damage dealt per hit is simply $h/\L_h$ and the damage per second can be obtained from it by dividing with the attack interval $T_A$.
 
+Eq\ref{eq:explicitL} can be annoying to work with, especially for large $h$, so an approximation for the case $h \gg m$ is needed. Intuitively the length of a fight should have linear dependency on hitpoints as $h \rightarrow \infty$. This is because on average one can expect each hit to do $am/2$ damage and therefore it should take approximately $2h/am$ hits to kill an enemy with $h$ hitpoints. Due to overkill however, the last hit will do slightly less than $am/2$ damage on average introducing a constant correction term to this linear approximation.
+The average length of a fight with no regeneration has the following asymptotic behaviour (derivation not shown here).
+\begin{align}\label{eq:asymptoticAppr}
+\L_h \sim \frac{2}{ma}\left(h + \frac{m-1}{3}\right)
+\end{align}
+The correctness of both the results was validated by comparing them to a computer simulation. The comparison is illustrated in figure~2.
+\begin{figure}[t]\label{fig:apprComparison}
+    \includegraphics[scale=1.1]{dph-appr-m6.pdf}
+    \caption{Comparison of damage per hit (DPH) calculated using the explicit formula (eq\ref{eq:explicitL}), asymptotic approximation (eq\ref{eq:asymptoticAppr}) and a simulation. The simulation was written using the damage calculation mechanics described in Chapter~\ref{chap:fightDef}. For each datapoint $10^{5}$ fights were simulated and their average lengths calculated.}
+\end{figure}
