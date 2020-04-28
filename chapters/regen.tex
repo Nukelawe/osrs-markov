@@ -1,38 +1,15 @@
+\pagebreak
 \section{Regeneration}\label{chap:regen}
-When regeneration is considered, the random walk that was used to describe a fight in Chapter~\ref{chap:fightDef} gets new edges. Now it will be possible to walk backwards as well as forwards in the state space. Unfortunately, the regeneration period $T_R$ and the attack interval $T_A$ are generally not equal. The attack and healing cycles will also go in and out of synchronization if the two periods are not integer multiples of one another. This makes the transition probabilities of the random walk no longer depend on just the current state and the Markov property is lost. This means we cannot use the methodology developed in Chapter~\ref{chap:fightDef}. However, the regeneration model described in Chapter~\ref{chap:fightMechanics} could be tweaked a bit to reattain the Markov property. The tweaked model can then be validated against a simulation that uses the more accurate regeneration mechanics.
+\input{chapters/regen-random-walker}
 
-%Consider the time interval $\Delta t_k = [t_k, t_{k+1}-1]$, where $t_k$ is the game tick on which the $k$th hit occurs. By choosing $t_0 = 0$, the time interval can be written as
-%\begin{align}
-%	\Delta t_k = [kT_A, (k+1)T_A - 1].
-%\end{align}
-%The random walk approach described in Chapter~\ref{chap:fightDef} can be applied to fights with regeneration by letting a step correspond to the overall state change in the time interval $\Delta t_k$. If we assume that $T_R \geq T_A$ the number of regeneration attempts during $\Delta t_k$ is either 1 or 0 depending on the phase of the regeneration cycle. If the time at which the first regeneration occurs is $\tau$ then a regeneration attempt occurs during $\Delta t_k$ if and only if there exists $n \in \mathbb{N}_0$ such that
-%\begin{align}
-%	kT_A \leq \tau& + nT_R \leq (k+1)T_A - 1\\
-%	\iff kT_A - nT_R \leq \tau& \leq kT_A - nT_R + T_A - 1
-%\end{align}
-%the number $n$ can be further constrained by using the fact that $0 < \tau \leq T_R$.
-%\begin{align}
-%	kT_A - nT_R &\leq \tau \leq T_R &\mbox{and}& &0 &< \tau \leq kT_A - nT_R + T_A - 1\\
-%	n &\geq \frac{kT_A}{T_R} - 1 && &n &< \frac{kT_A}{T_R} + \frac{T_A - 1}{T_R}
-%\end{align}
-%\begin{align}
-%	\frac{kT_A}{T_R} - 1 \leq n < \frac{kT_A}{T_R} + 1 - \frac{1}{T_R}
-%\end{align}
-%
-%While treating the regeneration attempt probability between hits as random variables is true
-%The assumption $T_A \leq T_B$ should hold for nearly all cases in practice as the the typical regeneration period is 60 seconds and even the slowest weapons have attack periods of just 4.2 seconds. For some rarer cases such as flinching an enemy with unusually high regeneration rate where this could become a problem one could simply allow the regeneration of more than 1 hitpoint per attack interval.
-%
-%
-%
-%The regeneration attempt fails if the enemy is either already dead or fully regenerated.
-
-Instead of regenerating deterministically at realistic time intervals we could assume that the healing happens right after each hit with such a probability that the correct regeneration rate is achieved.
-
+\subsection{Random healing cycle approximation}
+Instead of regenerating deterministically at realistic time intervals we could assume that the healing happens right after each hit with such a probability that the correct regeneration rate is achieved. This reduces the complexity of equation~\ref{eq:regenrecurrence} significantly as it removes the $\tau$-dependence entirely. We define the \emph{regeneration rate} as
 \begin{align}\label{eq:regenProbability}
-    \rho = \frac{T_A}{T_R}.
+    \rho = \frac{T_A}{T_R}
 \end{align}
+and interpret it as the probability that a regeneration event occurs during an attack cycle.
 
-When accounting for regeneration, there are two ways of lowering the hitpoints by $k$: hit $k$ and heal 0 or hit $k+1$ and heal 1. Since regeneration has no effect on 1-hit fights we take the result $\L_1 = \frac{m+1}{am}$ from Chapter~\ref{chap:noregen} and assume without loss of generality that $h>1$. In terms of the regeneration probability $\rho$ and the damage roll $X$ the transition probabilities are
+In this model, there are two ways of lowering the hitpoints by $k$: hit $k$ and heal 0 or hit $k+1$ and heal 1. In terms of the regeneration probability $\rho$ and the damage roll $X$ the transition probabilities are
 \begin{align}
     p_{ij}
          &= \begin{cases}
@@ -44,16 +21,5 @@ When accounting for regeneration, there are two ways of lowering the hitpoints b
 \end{align}
 Notice that transitioning to state 0 does not depend on regeneration because dead enemies cannot regenerate. For the same reason it is impossible to land in state 1 by first reaching 0 hitpoints and then healing. Transition probability for going to state $h$ on the other hand, is different because it is not possible to heal past maximum hitpoints.
 
-With regeneration taken into account it now makes a difference whether the enemy is at full hitpoints or not. To remind ourselves of this detail we let $L_{jh}$ note the length of a fight against an enemy with $h$ maximum hitpoints of which $j$ are remaining. In case of no regeneration we would have $\langle L_{jh} \rangle = \langle L_{jj} \rangle$. Ultimately we are only interested in fights that start at full hitpoints but since the. The transition probabilities can now be inserted to eq\ref{eq:fightLengthRecursion} and after a very tedious calculation (see Appendix~\ref{sect:regenRecurrenceDerivation}) one obtains the following recurrence.
-\begin{align}\label{eq:regenLengthRecurrence}
-    \L_h &= \begin{cases}
-        \frac{m-\rho+1}{m-\rho}\L_{h-1} \quad &\mbox{if } h \leq m+1\\
-        \frac{m-\rho+1}{m-\rho}\L_{h-1} - \frac{\rho}{m-\rho}\L_{h-m} - \frac{1-\rho}{m-\rho}\L_{h-m-1} \quad &\mbox{if } h > m+1
-    \end{cases}
-\end{align}
-As expected, this reduces to the regenerationless case (eq\ref{eq:complexRecurrence1}) when $\rho=0$.
-
-Unfortunately, knowing the length of a fight is not very useful for calculating the damage dealt per hit. Total damage dealt is no longer equal to the enemy hitpoints as there might have been regenerations. Furthermore, even if the number of healed hitpoints was known it would now be a random variable, so dividing its expected value by the expected length would no longer give the correct result. Nevertheless, eq\ref{eq:regenLengthRecurrence} still serves as a way of checking the validity of the tweaked regeneration model that was used to preserve the Markov property.
-
-% In this case it is better to try express damage per hit directly. Notice that as long as the enemy has more than $m$ hitpoints remaining the expected damage dealt by each hit is $\frac{ma}{2}$. The probability distribution of damage dealt by a hit only depends on how much below $m$ the current hitpoint state is.
-% Assuming there is no idle time between fights the random walk presented in Chapter~\ref{chap:fightDef} can be made cyclic by letting $h$ and $0$ represent the same state. This makes sense as long as the enemy is always immediately replaced by a new one once it dies. Finding the steady state of this cyclic random walk allows us to determine the proportion of hits that start from somewhere. Finding the steady state of this cyclic random walk allows us to determine the proportion of hits that start from somewhere.
+Naturally it is still possible for the remaining hitpoints to climb up the state space making a recursive solution impossible. However, because of the eliminated dependence on the pahse of the regeneration cycle the walker is now fully described by equation~\ref{eq:fightLengthRecursion} just like in the regenerationless case. This reduces the size of the linear system down to $h$ equations, which is a much more manageable number for practical calculations.
+\input{chapters/regen-effhp}

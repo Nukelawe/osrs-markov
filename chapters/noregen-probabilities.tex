@@ -1,0 +1,20 @@
+\subsection{Transition probabilities}
+To compute the length of a fight from the recurrence (eq\ref{eq:fightLengthRecursion}) we need to know the transition probabilities. If regeneration is ignored all the state transitions are caused by hitting the enemy. From the fight mechanics as stated in Chapter~\ref{chap:fightMechanics} we can determine the probability distribution of the accuracy-corrected damage roll $X$. This is the amount of damage dealt before capping it by overkill.
+\begin{align}
+	\Pr{X = k} =
+	\begin{cases}
+		1 - \frac{am}{m+1}, &\mbox{if } k = 0 \\
+		\frac{a}{m+1},      &\mbox{if }1 \leq k \leq m
+	\end{cases}\label{eq:damageRollDistribution}
+\end{align}
+where $a$ is the accuracy. As expected, the distribution is uniform everywhere except at 0, where the chance of missing skews it. In terms of eq\ref{eq:damageRollDistribution} the transition probabilities are given by
+\begin{align}
+    p_{ij}
+         &= \begin{cases}
+            \Pr{X=\,j-i} \quad &\mbox{if } i > 0 \\
+            \Pr{X\geq\,j-i} \quad &\mbox{if } i = 0
+        \end{cases}\label{eq:noregenProb}.
+\end{align}
+
+A nice feature of the transition probabilities for the regenerationless case is that the hitpoints can never increase because $p_{ij} = 0$ for $i > j$. In particular, this means that it makes no difference if the enemy being fought has full hitpoints or if some of them are lost. In the absence of regeneration a fight against an enemy with $j$ hitpoints remaining is identical to a fight against an enemy whose maximum hitpoints \emph{are} $j$. Therefore, we can without loss of generality assume $j=h$ studying only fights that start at maximum hitpoints.
+

@@ -1,0 +1,27 @@
+\subsection{Effective hitpoints approach}
+%Let $D_j^\tau$ be the total damage dealt in a fight. As in Chapter~\ref{chap:regen-walker} we let the indices $\tau$ and $j$ to denote the phase of the regeneration cycle and the remaining hitpoints. If we for now assume that the hitpoints are uncapped, then $D_j^\tau = j + N_j^\tau$, where $N_j^\tau$ is the number of regeneration attempts during the fight. If the fight has length $L_j^\tau$ it lasts for $T_A L_j^\tau$ ticks. The set of ticks on which the regeneration attempts during the fight occur is $\{\tau, \tau+T_R, \ldots, \tau + (N_j^\tau-1) T_R\}$
+
+Consider a fight of length $L$. Since the fight lasts $T_A L$ ticks the number of hitpoints regenerated can be estimated by $\frac{T_A}{T_R} L$. Assuming that the enemy has $h$ maximum hitpoints, the total damage dealt during the fight is $y \equiv h + \frac{T_A}{T_R} L$. This quantity is called the \textit{effective hitpoints} because the fight is nearly equivalent to one against a non-regenerating enemy with $y$ hitpoints. If regeneration rate is small compared to the damage rate the expected length of a fight should be approximately $\langle L_y \rangle$. This gives us the equation
+\begin{align}\label{eq:effHp}
+	y = h + \rho\langle L_y \rangle
+\end{align}
+where we have defined the \textit{regeneration rate} $\rho \equiv \frac{T_A}{T_R}$.
+
+To solve $y$ from this equation we use the asymptotic approximation (eq\ref{eq:asymptoticAppr}).
+\begin{align}
+	y &= h + \frac{2\rho}{ma} \left(y + \frac{m-1}{3}\right)\nonumber\\
+	\implies \left(1 - \frac{2\rho}{ma}\right) y &= h + \frac{2\rho}{ma} \frac{m-1}{3}\nonumber\\
+	\implies y
+		&= \frac{1}{ma - 2\rho}\left(mah + 2\rho \frac{m-1}{3}\right)\nonumber\\
+		&= h + \rho\left(\frac{h + \frac{m-1}{3}}{\frac{ma}{2} - \rho}\right)
+\end{align}
+Writing the effective hitpoints in this form reveals some nice properties. Comparing the result to eq\ref{eq:effHp} allows reading off the expected length of a fight as
+\begin{align}
+	\langle L_y \rangle = \frac{h + \frac{m-1}{3}}{\frac{ma}{2} - \rho}
+\end{align}
+and in turn the damage per hit as
+\begin{align}
+	\frac{y}{\langle L_y \rangle}
+		&= \frac{\frac{ma}{2} - \rho}{1 + \frac{m-1}{3h}} + \rho
+\end{align}
+If the regeneration rate $\rho$ is larger than the damage rate $\frac{ma}{2}$ the equation breaks down as the term $\frac{ma}{2} - \rho$ becomes negative. This seems to suggest that in this case the fight would go on forever. Of course this is just a limitation of the model since in reality the fight would eventually terminate as long as $T_R > T_A$ and $m > 0$, which is a very resonable assumption.

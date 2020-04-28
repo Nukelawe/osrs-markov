@@ -34,18 +34,18 @@
     \end{tikzpicture}\caption{Random walk diagram for $m=3$, $h=4$ and no regeneration. The probability of walking to state $i$ from state $j$ is given with the transition probability $p_{ij}$. Only edges for which $p_{ij} > 0$ are shown.}
 \end{figure}
 
-We define the \textit{state space} as the set of all possible values remaining hitpoints can have. Every fight against an enemy with maximum hitpoints $h$ can be thought of as a random walk in the state space $\{0,\ldots,h\}$. A walk can be labeled with a sequence of hitpoint states $(H_k)_{k=0}^{n}$ visited during the fight such that $H_n=0$ (fight ends in death) and $h \geq H_k > 0$ for $k<n$.
+We define the \textit{state space} $\mathcal{H}$ as the set of all possible values remaining hitpoints can have during a fight. For a fight against an enemy with $h$ maximum hitpoints the this is $\mathcal{H} = \{0,\ldots,h\}$. Fights can be thought of as random walks in $\mathcal{H}$ terminating in state 0. Each walk can be labeled with a sequence of hitpoint states $(H_k)_{k=0}^{n}$ visited during the fight such that $H_n=0$ (fight ends in death) and $h \geq H_k > 0$ for $k<n$ (death does not happen before the last hit).
 The probability of transitioning to state $i$ from state $j$ is called the \textit{transition probability} and is defined as
 \begin{align}\label{eq:transitionProbabilities}
     p_{ij} = \Pr{H_k = i \mid H_{k-1} = j}.
 \end{align}
-The transition probabilities are said to have the \textit{Markov property} as they only depend on the current state.
+The transition probabilities are said to have the \textit{Markov property} as they only depend on the current state of the random walker.
 
-Let $\mathcal{S}_j^n$ be the set of all possible fights of length $n$ against an enemy with $j$ hitpoints remaining. The simplest case is the set of all 1-hit fights $\mathcal{S}_j^1 = \{(j,0)\}$. The sets of all longer fights can be defined recursively by noticing that if the first hit lowers the hitpoints to $i$, the remaining sequence of states is equivalent to a fight of length $n-1$ against an enemy with $i$ hitpoints remaining.
+Let $\mathcal{S}_j^n$ be the set of all possible fights of length $n$ against an enemy with $j$ hitpoints remaining. The simplest possible case is the set of all 1-hit fights $\mathcal{S}_j^1 = \{(j,0)\}$. The sets of all longer fights can be defined recursively by noticing that if the first hit lowers the hitpoints to $i$, the remaining sequence of states is equivalent to a fight of length $n-1$ against an enemy with $i$ hitpoints remaining. In other words
 \begin{align}
-    \mathcal{S}_j^n &=  \{j\} \times \bigcup_{k=1}^h \mathcal{S}_i^{n-1} \quad \mbox{for } n>1\label{eq:fightRecursion}
+	\mathcal{S}_j^n &=  \{j\} \times \bigcup_{i=1}^h \mathcal{S}_i^{n-1} \quad \mbox{for } n>1.\label{eq:fightRecursion}
 \end{align}
-where $h$ is the maximum number of hitpoints the enemy can have. To get an idea how eq\ref{eq:fightRecursion} works consider for example the set of all 2-hit fights $\mathcal{S}_j^2 = \{(j,h,0), (j,h-1,0), \ldots, (j,2,0), (j,1,0)\}$.
+For the set of all 2-hit fights this gives $\mathcal{S}_j^2 = \{(j,h,0), (j,h-1,0), \ldots, (j,2,0), (j,1,0)\}$.
 
 Using the transition probabilities (eq\ref{eq:transitionProbabilities}) the probability that an $n$-hit fight $f \in \mathcal{S}_{j}^n$ occurs is
 \begin{align}
@@ -53,14 +53,16 @@ Using the transition probabilities (eq\ref{eq:transitionProbabilities}) the prob
 \end{align}
 where $f_k$ is the number of hitpoints the enemy has remaining after $k$ hits.
 
-Let $L_j$ be the length of a fight against an enemy with $j$ hitpoints remaining.
-By summing over all fights of length $n$ and invoking eq\ref{eq:fightRecursion} a recurrence relation for the probability that fight has length $n$ is obtained. Since the recurrence can only be applied to fights of length $2$ or higher, we treat the case $L_j = 1$ separately.
-\begin{align}\label{eq:probabilityRecursion}
-    \Pr{L_j = n} &= \sum_{\mathclap{f \in \mathcal{S}_j^n}}\Pr{f}
-            = \sum_{i=1}^h p_{ij} \sum_{\mathclap{f \in \mathcal{S}_j^{n-1}}}\Pr{f}
-            = \sum_{i=1}^h p_{ij} \Pr{L_i = n-1}\\
+Let $L_j$ be the length of a fight against an enemy with $j$ hitpoints remaining. The probability of a 1-hit fight is now
+\begin{align}\label{eq:probabilityRecursion1hit}
     \Pr{L_j = 1} &= \sum_{\mathclap{f \in \mathcal{S}_j^1}}\Pr{f}
             = \Pr{(j,0}) = p_{0j}
+\end{align}
+For longer fights the probability is obtained by summing over all fights of length $n$ and invoking eq\ref{eq:fightRecursion}
+\begin{align}\label{eq:probabilityRecursion}
+    \Pr{L_j = n} &= \sum_{\mathclap{f \in \mathcal{S}_j^n}}\Pr{f}
+            = \sum_{i=1}^h p_{ij} \sum_{\mathclap{f \in \mathcal{S}_i^{n-1}}}\Pr{f}
+            = \sum_{i=1}^h p_{ij} \Pr{L_i = n-1}
 \end{align}
 The expected length of a fight can now be expressed as
 \begin{align}
@@ -84,6 +86,6 @@ In the last equality we used the definition of expected value as well as the fac
 Since the transition probabilities must add up to 1 when summed over the entire state space, we have $\sum_{i=0}^{h}p_{ij} = 1$ and the recurrence relation for the expected length of a fight becomes
 \begin{align}
 	\boxed{\langle L_j \rangle
-		= 1 + \sum_{i=1}^h p_{ij}\langle L_i \rangle}\label{eq:fightLengthRecursion}
+		= 1 + \sum_{i=1}^h p_{ij}\langle L_i \rangle}.\label{eq:fightLengthRecursion}
 \end{align}
-In the next chapters we will take a deeper look at the transition probabilities and attempt to solve this recurrence relation.
+Since eq\ref{eq:fightLengthRecursion} holds for all $j \in \{1,\ldots,h\}$ it defines a linear system of $h$ equations. In the next chapters we will study them further by taking a deeper look at the transition probabilities.

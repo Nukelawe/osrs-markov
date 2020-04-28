@@ -1,4 +1,4 @@
-\section{Asymptotic approximation}
+\subsection{Asymptotic approximation}
 Eq\ref{eq:explicitL} can be annoying to work with, especially for large $h$, so an approximation for the case $h \gg m$ is needed. Intuitively the length of a fight should have linear dependency on hitpoints as $h \rightarrow \infty$. This is because on average one can expect each hit to do $am/2$ damage and therefore it should take approximately $2h/am$ hits to kill an enemy with $h$ hitpoints. Due to overkill however, the last hit will do slightly less than $am/2$ damage on average introducing a constant correction term to this linear approximation.
 %Since eq\ref{eq:explicitL} is tricky to approximate we take a completely different approach and try to look at the damage per hit directly instead of trying to approximate $\L_h$. Recall the definition of a fight as a sequence of damage rolls $\{X_i\}$. The total damage dealt by these hits is $\sum X_i = h$, but because of overkill the last hit contributes less to this sum than the others. To find the magnitude of this discrepancy, let us ignore all the hits that deal no damage to obtain a sequence of non-zero hits, $\{Z_i\}$. This is a subsequence of $\{X_i\}$ and its elements have the following probabilities, where $H_i$ is the remaining hitpoints after $i$ \textit{non-zero} hits.
 %\begin{align}
@@ -104,6 +104,11 @@ The average length of a fight with no regeneration has the following asymptotic 
 \begin{align}\label{eq:asymptoticAppr}
 \L_h \sim \frac{2}{ma}\left(h + \frac{m-1}{3}\right)
 \end{align}
+The correctness of both the results was validated by comparing them to a computer simulation. The comparison is illustrated in figure~2.
+\begin{figure}[t]\label{fig:apprComparison}
+    \includegraphics[scale=1.1]{dph-appr-m6.pdf}
+    \caption{Comparison of damage per hit (DPH) calculated using the explicit formula (eq\ref{eq:explicitL}), asymptotic approximation (eq\ref{eq:asymptoticAppr}) and a simulation. The simulation was written using the damage calculation mechanics described in Chapter~\ref{chap:fightDef}. For each datapoint $10^{5}$ fights were simulated and their average lengths calculated.}
+\end{figure}
 
 %The approximation is clearly correct and converges quite quickly as can be seen from Figure~\ref{fig:apprComparison}. But the lack of rigour in the last few steps of deriving it calls for either a proof of its validity or a different derivation method. If eq\ref{eq:asymptoticAppr} really is an asymptotic approximation of $\L_h$ it should satisfy
 %\begin{align}
@@ -114,4 +119,3 @@ The average length of a fight with no regeneration has the following asymptotic 
 %    \includegraphics[scale=1.1]{dph-appr-m6.pdf}
 %    \caption{Comparison of damage per hit (DPH) calculated using the explicit formula (eq\ref{eq:explicitL}), asymptotic approximation (eq\ref{eq:asymptoticAppr}) and a simulation. The simulation was written using the damage calculation mechanics described in Chapter~\ref{chap:fightDef}. For each datapoint $10^{5}$ fights were simulated and their average lengths calculated.}
 %\end{figure}
-
