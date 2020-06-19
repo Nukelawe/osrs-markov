@@ -1,62 +1,32 @@
 \subsection{Solving the recurrences}
-We begin by defining $r \equiv \frac{m+1}{m}$ and $p \equiv \frac{-1}{m+1}$. This allows rewriting the recurrence relations more compactly as
-\begin{align}\label{eq:complexRecurrence2}
-	\boxed{\langle L_h \rangle = \begin{cases}
-        r\left(\langle L_{h-1}\rangle - p\langle L_{h-m-1}\rangle \right) &\quad \mbox{if } h \leq m+1\\
-        r\langle L_{h-1}\rangle &\quad \mbox{if } h > m+1
-	\end{cases}}
+To solve the recurrence we find its generating function $g(z)$, which when expanded as power series has $\E{L_h}$ as its coefficients, i.e.
+\begin{align}
+    g(z) = \sum_{h=1}^{\infty} \E{L_h} z^h.
 \end{align}
-with the initial condition $\langle L_1 \rangle = \frac{r}{a}$.
-The case $h \leq m+1$ is simply the recurrence relation for a geometric sequence. Therefore,
-\begin{align}\label{eq:geomProgression}
-    \langle L_h \rangle &= \frac{r^h}{a} \quad \mbox{if } h \leq m+1.
+To find the generating function for this particular recurrence we substitute $\E{L_h}$ with eq\ref{eq:noregenRecursion}.
+\begin{align}
+	g(z)
+		&= \sum_{h=1}^\infty\bigg(\E{L_1} + \frac{1}{m}\sum_{i=1}^m \E{L_{h-i}}\bigg)z^h\nonumber\\
+		&= \E{L_1}\sum_{h=1}^\infty z^h + \frac{1}{m} \sum_{h=1}^\infty\sum_{i=1}^m \E{L_{h-i}} z^h \nonumber\\
+		&= \frac{m+1}{am}\sum_{h=1}^\infty z^h + \frac{1}{m} \sum_{i=1}^m\sum_{h=1}^\infty \E{L_h} z^{h+i} \nonumber\\
+		&= \frac{1}{m}\bigg(\frac{m+1}{a}\frac{z}{1-z} + \sum_{i=1}^m z^i g(z)\bigg)\nonumber\\
+		&= \frac{1}{m}\bigg(\frac{(m+1)z}{a(1-z)} + \frac{z - z^{m+1}}{1-z} g(z)\bigg)\nonumber\\
+	\implies m(1-z)g(z) &= \frac{(m+1)z}{a} + \big(z - z^{m+1}\big)g(z)\nonumber\\
+	\implies \big(m - mz + z^{m+1} - z\big)g(z) &= \frac{(m+1)z}{a}\nonumber\\
+	\implies g(z) &= \frac{(m+1)z/a}{m - (m+1)z + z^{m+1}}\label{eq:ogf}
 \end{align}
 
-The recurrence relation for the case $h > m+1$ is not as easy to bring in a non-recursive form. It is a linear recurrence of order $m$, the initial $m$ elements of which are given by eq\ref{eq:geomProgression}.
-This recurrence is perhaps most effectively approached with generating functions. The ordinary generating function of the number sequence $\langle L_h \rangle$ is the function $g(z)$ whose power series expansion has $\langle L_h \rangle$ as coefficients.
+To read off the explicit formula for $\E{L_h}$ the generating function must be expanded back into a power series. To do so we write it in the form of a geometric sum.
 \begin{align}
-    g(z) = \sum_{h=1}^{\infty} \langle L_h \rangle z^h
+	g(z) &= \frac{\frac{m+1}{am}z}{1 - \frac{z}{m}(m+1-z^m)}\nonumber\\
+	&= \frac{m+1}{am}z \sum_{n=0}^\infty {\Big(\frac{z}{m}\Big)}^n {\big(m+1-z^m\big)}^n\nonumber\\
+	&= \frac{m+1}{am}z \sum_{n=0}^\infty {\Big(\frac{z}{m}\Big)}^n \sum_{i=0}^{n} {(m+1)}^{n-i}{(-1)}^i z^{mi} {n \choose i}\nonumber\\
+	&= \frac{1}{a} \sum_{n=0}^\infty \sum_{i=0}^{n} {\Big(\frac{m+1}{m}\Big)}^{n+1} {\Big(\frac{-1}{m+1}\Big)}^i {n \choose i}z^{mi+n+1}\label{eq:ogf2}.
 \end{align}
-Using the generating function formulation the recurrence (eq\ref{eq:complexRecurrence2}) translates into an algebraic equation for $g(z)$.
-\begin{align}
-    g(z) &= \sum_{h=1}^{m+1} \langle L_h \rangle z^h + \sum_{h=m+2}^{\infty} \langle L_h \rangle z^h\nonumber\\
-         &= \sum_{h=1}^{m+1} \langle L_h \rangle z^h + \sum_{h=m+2}^{\infty} r\left(\langle L_{h-1}\rangle + p\langle L_{h-m-1}\rangle\right)z^h\nonumber\\
-         &= \sum_{h=1}^{m+1} \langle L_h \rangle z^h + rz\sum_{h=m+2}^{\infty}\langle L_{h-1}\rangle z^{h-1} + rpz^{m+1}\sum_{h=m+2}^{\infty}\langle L_{h-m-1}\rangle z^{h-m-1}\nonumber\\
-         &= \sum_{h=1}^{m+1} \langle L_h \rangle z^h + rz\sum_{h=m+1}^{\infty}\langle L_h\rangle z^{h} + rpz^{m+1}\sum_{h=1}^{\infty}\langle L_{h} \rangle z^{h}\nonumber\\
-         &= \sum_{h=1}^{m} \langle L_h \rangle z^h + \langle L_{m+1} \rangle z^{m+1} + rz\left(\sum_{h=1}^{\infty}\langle L_{h} \rangle z^{h} - \sum_{h=1}^{m}\langle L_{h}\rangle z^{h} \right) + rpz^{m+1}g(z)\nonumber\\
-         &= (1 - rz)\sum_{h=1}^{m} \langle L_h \rangle z^h + \langle L_{m+1}\rangle z^{m+1} + \left(rz + rpz^{m+1}\right)g(z)
-\end{align}
-Now, moving all terms containing $g(z)$ to the left and substituting the values for $\langle L_h \rangle$ from eq\ref{eq:geomProgression} gives
-\begin{align}
-    (1 - rz - rpz^{m+1})g(z) &= \frac{1}{a}\left({(rz)}^{m+1} + (1 - rz)\sum_{h=1}^{m} {(rz)}^h\right)\label{eq:ogfderiv1}
-\end{align}
-The partial sum on the right is the $m$ first terms of a geometric series which has the following closed form expression.
-\begin{align*}
-    \sum_{h=1}^{m} {(rz)}^h = rz\frac{1 - {(rz)}^m}{1-rz}
-\end{align*}
-Plugging it back to eq\ref{eq:ogfderiv1} to gives
-\begin{align}
-    (1 - rz - rpz^{m+1})g(z)
-		&= \frac{1}{a}\left({(rz)}^{m+1} + rz\left(1 - {(rz)}^m\right)\right)\nonumber
-        = \frac{1}{a}rz\nonumber\\
-    \implies g(z) &= \frac{rz/a}{1 - rz - rpz^{m+1}}\label{eq:ogf}.
-\end{align}
-
-To read off the explicit formula for $\langle L_h \rangle$ the generating function must be expanded back into a power series. This is possible by noticing that $g(z)$ is an infinite geometric sum with $rz(1 - pz^m)$ as its coefficient.
-\begin{align}
-    g(z) &= \frac{rz/a}{1 - rz\left(1 + pz^{m}\right)}\nonumber
-    = \frac{rz}{a} \sum_{n=0}^\infty {(rz(1 + pz^m))}^n\nonumber
-    = \frac{1}{a} \sum_{n=0}^\infty {(rz)}^{n+1}{(1 + pz^m)}^n
-\end{align}
-Then, we expand the $n$th order binomial term using the binomial theorem.
-\begin{align}
-    g(z) &= \frac{1}{a} \sum_{n=0}^\infty {(rz)}^{n+1}\sum_{i=0}^{n} {(pz^m)}^i {n \choose i}\nonumber\\
-         &= \sum_{n=0}^\infty \frac{1}{a}\sum_{i=0}^{n} r^{n+1} p^i {n \choose i}z^{mi+n+1}\label{eq:ogf2}.
-\end{align}
-$\langle L_h \rangle$ is now the coefficient of the term $z^h$. Looking at the exponent of $z$ in eq\ref{eq:ogf2} we see that for the coefficient of interest the indices $i$ and $n$ must satisfy $h=mi+n+1$. For each $i$ there is exactly one valid $n$, namely $n = h-mi-1$.
+$\E{L_h}$ is now the coefficient of the term $z^h$. Looking at the exponent of $z$ in eq\ref{eq:ogf2} we see that for the coefficient of interest the indices $i$ and $n$ must satisfy $h=mi+n+1$. For each $i$ there is exactly one valid $n$, namely $n = h-mi-1$.
 Therefore, the coefficient of the $h$th order term in the series expansion of $g(z)$ is
 \begin{align}
-    \langle L_h \rangle &= \frac{1}{a}\sum_{i \in \mathcal{I}} r^{h-mi} p^i {h-mi-1 \choose i} \nonumber
+    \E{L_h} &= \frac{1}{a}\sum_{i \in \mathcal{I}} {\Big(\frac{m+1}{m}\Big)}^{h-mi} {\Big(\frac{-1}{m+1}\Big)}^i {h-mi-1 \choose i} \nonumber
 \end{align}
 where $\mathcal{I}$ is the set of indices $i$ such that
 \begin{align*}
@@ -64,8 +34,18 @@ where $\mathcal{I}$ is the set of indices $i$ such that
     \iff (m+1)i \leq h-1
     \iff i \leq \frac{h-1}{m+1}.
 \end{align*}
-Since $i$ must also be an integer the index set becomes $\mathcal{I} = \left\{0,1,\ldots,\left\lfloor{\frac{h-1}{m+1}}\right\rfloor\right\}$. Expressing the constants $r$ and $p$ explicitly, the solution to the recursion problem (eq\ref{eq:complexRecurrence2}) can be written as
+Since $i$ must also be an integer the index set becomes $\mathcal{I} = \left\{0,1,\ldots,\left\lfloor{\frac{h-1}{m+1}}\right\rfloor\right\}$ and the explicit solution to the recurrence can be written as
 \begin{align}
-    \langle L_h \rangle &= \frac{1}{a}\sum_{i=0}^{\left\lfloor{\frac{h-1}{m+1}}\right\rfloor} {\left(\frac{m+1}{m}\right)}^{h-mi} {\left(\frac{-1}{m+1}\right)}^i {h-mi-1 \choose i}.\label{eq:explicitL}
+	\boxed{\E{L_h}
+		= \frac{1}{a}\sum_{i=0}^{\left\lfloor{\frac{h-1}{m+1}}\right\rfloor} {\left(\frac{m+1}{m}\right)}^{h-mi} {\left(\frac{-1}{m+1}\right)}^i {h-mi-1 \choose i}.
+	}\label{eq:explicitL}
 \end{align}
-Naturally this can also be proven to satisfy the recursion using induction (see Appendix~\ref{sect:genLProof}). With this result the damage dealt per hit is simply $h/\langle L_h \rangle$ and the damage per second can be obtained from it by dividing with the attack interval $T_A$.
+See Appendix~\ref{sect:genLProof} for an inductive proof that eq\ref{eq:explicitL} is the solution of the original recurrence relation.
+
+It is worth mentioning that for small $h$ eq\ref{eq:explicitL} simplifies to the geometric sequence. In particular,
+\begin{align}
+	\E{L_h}
+		= \frac{1}{a}{\left(\frac{m+1}{m}\right)}^h \quad \mbox{if }h \leq m+1
+	\label{eq:geomL}
+\end{align}
+With this result the damage dealt per hit is simply $h/\E{L_h}$ and the damage per second can be obtained from it by dividing with the attack interval $T_A$.

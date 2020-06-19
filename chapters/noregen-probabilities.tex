@@ -1,10 +1,55 @@
-\subsection{Transition probabilities}
-To compute the length of a fight from the recurrence (eq\ref{eq:fightLengthRecursion}) we need to know the transition probabilities. If regeneration is ignored all the state transitions are caused by hitting the enemy. From the fight mechanics as stated in Chapter~\ref{chap:fightMechanics} we can determine the probability distribution of the accuracy-corrected damage roll $X$. This is the amount of damage dealt before capping it by overkill.
+\subsection{Fight length recurrence relations}
+Using the transition probabilities (eq\ref{eq:transitionProbabilities}) the probability that an $n$-hit fight $f \in \mathcal{S}_{j}^n$ occurs is
+\begin{align}
+    \Pr{f} &= \prod_{k=1}^{n} p_{f_{k} f_{k-1}}
+\end{align}
+
+where $f_k$ is the number of hitpoints the enemy has remaining after $k$ hits.
+Let $L_j$ be the length of a fight against an enemy with $j$ hitpoints remaining. The probability of a 1-hit fight is now
+\begin{align}\label{eq:probabilityRecursion1hit}
+    \Pr{L_j = 1} &= \sum_{\mathclap{f \in \mathcal{S}_j^1}}\Pr{f}
+            = \Pr{(j,0}) = p_{0j}
+\end{align}
+For longer fights the probability is obtained by summing over all fights of length $n$ and invoking eq\ref{eq:fightRecursion}
+\begin{align}\label{eq:probabilityRecursion}
+    \Pr{L_j = n} &= \sum_{\mathclap{f \in \mathcal{S}_j^n}}\Pr{f}
+            = \sum_{i=1}^h p_{ij} \sum_{f \in \mathcal{S}\mathrlap{_i^{n-1}}}\Pr{f}
+            = \sum_{i=1}^h p_{ij} \Pr{L_i = n-1}
+\end{align}
+The expected length of a fight can now be expressed as
+\begin{align}
+	\langle L_j \rangle &= \sum_{n=1}^{\infty}n\Pr{L_j=n}\nonumber\\
+       &= \Pr{L_j=1} + \sum_{n=2}^{\infty}n\sum_{i=1}^h p_{ij} \Pr{L_i=n-1}\nonumber\\
+       &= p_{0j} + \sum_{i=1}^h p_{ij} \sum_{n=2}^{\infty}n\Pr{L_i=n-1}.\label{eq:derivation2}
+\end{align}
+The inner sum can be worked out to be
+\begin{align}
+    \sum_{n=2}^{\infty}n\Pr{L_i=n-1}
+       &= \sum_{n=1}^{\infty}(n+1)\Pr{L_i=n} \nonumber\\
+	   &= \sum_{n=1}^{\infty}n\Pr{L_i=n} + \sum_{n=1}^{\infty}\Pr{L_i=n}\nonumber\\
+	   &= \langle L_i \rangle + 1.
+\end{align}
+In the last equality we used the definition of expected value as well as the fact that an enemy will be guaranteed to die if hit infinitely many times. Inserting this back into eq\ref{eq:derivation2} gives
+\begin{align}
+    \langle L_j \rangle
+        &= p_{0j} + \sum_{i=1}^h p_{ij}(\langle L_i \rangle+1)
+        = \sum_{i=0}^h p_{ij} + \sum_{i=1}^h p_{ij}\langle L_i \rangle
+\end{align}
+Since the transition probabilities must add up to 1 when summed over the entire state space, we have $\sum_{i=0}^{h}p_{ij} = 1$ and the recurrence relation for the expected length of a fight becomes
+\begin{align}
+	\langle L_j \rangle
+		= 1 + \sum_{i=1}^h p_{ij}\langle L_i \rangle.
+	\label{eq:fightLengthRecursion}
+\end{align}
+Since eq\ref{eq:fightLengthRecursion} holds for all $j \in \{1,\ldots,h\}$ it defines a linear system of $h$ equations. In the next chapters we will study them further by taking a deeper look at the transition probabilities.
+
+To compute the length of a fight from the recurrence (eq\ref{eq:fightLengthRecursion}) we need to know the transition probabilities. If regeneration is ignored all the state transitions are caused by hitting the enemy. From the fight mechanics as stated in Chapter~\ref{chap:fightMechanics} we can determine the probability distribution of the accuracy-corrected damage roll $X$. This is the amount of damage that would be dealt if the enemy had enough hitpoints to receive it (i.e. no overkill).
 \begin{align}
 	\Pr{X = k} =
 	\begin{cases}
 		1 - \frac{am}{m+1}, &\mbox{if } k = 0 \\
-		\frac{a}{m+1},      &\mbox{if }1 \leq k \leq m
+		\frac{a}{m+1},      &\mbox{if }1 \leq k \leq m\\
+		0,      			&\mbox{if }k > m
 	\end{cases}\label{eq:damageRollDistribution}
 \end{align}
 where $a$ is the accuracy. As expected, the distribution is uniform everywhere except at 0, where the chance of missing skews it. In terms of eq\ref{eq:damageRollDistribution} the transition probabilities are given by
@@ -16,5 +61,21 @@ where $a$ is the accuracy. As expected, the distribution is uniform everywhere e
         \end{cases}\label{eq:noregenProb}.
 \end{align}
 
-A nice feature of the transition probabilities for the regenerationless case is that the hitpoints can never increase because $p_{ij} = 0$ for $i > j$. In particular, this means that it makes no difference if the enemy being fought has full hitpoints or if some of them are lost. In the absence of regeneration a fight against an enemy with $j$ hitpoints remaining is identical to a fight against an enemy whose maximum hitpoints \emph{are} $j$. Therefore, we can without loss of generality assume $j=h$ studying only fights that start at maximum hitpoints.
+A nice feature of the transition probabilities for the regenerationless case is that the hitpoints can never increase because $p_{ij} = 0$ for $i > j$. In other words, it is impossible for the enemy hitpoints to climb up the state space. This means that it makes no difference if the enemy being fought has full hitpoints or if some of them are lost. In the absence of regeneration a fight against an enemy with $j$ hitpoints remaining is identical to a fight against an enemy whose maximum hitpoints \emph{is} $j$. Therefore, we can without loss of generality assume $j=h$ studying only fights that start at maximum hitpoints.
 
+With these remarks, the transition probabilities can be inserted to eq\ref{eq:fightLengthRecursion} to obtain
+\begin{align}
+	\langle L_h \rangle
+		&= 1 + \sum_{i=1}^h \Pr{X=\,h-i}\langle L_i \rangle\nonumber\\
+		&= 1 + \Pr{X=\,0}\langle L_h \rangle + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\nonumber\\
+	\implies \frac{am}{m+1}\langle L_h \rangle
+		&= 1 + \frac{a}{m+1}\sum_{i=h-m}^{h-1} \langle L_i \rangle\nonumber\\
+	\implies \langle L_h \rangle
+		&= \frac{m+1}{am} + \frac{1}{m}\sum_{i=\max(1,h-m)}^h \langle L_i \rangle\label{eq:recurrencetemp}
+\end{align}
+To simplify the summation limits in eq\ref{eq:recurrencetemp} we define $\langle L_i \rangle = 0$ for $i \leq 0$. Finally, by reversing the order of summation we get the recurrence relation
+\begin{align}
+	\boxed{\langle L_h \rangle
+		= \frac{m+1}{am} + \frac{1}{m}\sum_{i=1}^m \langle L_{h-i} \rangle
+	}\label{eq:noregenRecursion}.
+\end{align}

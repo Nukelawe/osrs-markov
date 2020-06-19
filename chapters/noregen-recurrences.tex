@@ -4,12 +4,13 @@ Inserting the transition probabilities into eq\ref{eq:fightLengthRecursion} give
     \langle L_h \rangle
         &= 1 + \sum_{i=1}^h \Pr{X=\,h-i}\langle L_i\rangle\nonumber\\
         &= 1 + \Pr{X=\,0}\langle L_h \rangle + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\nonumber\\
-    \implies \left(1 - \Pr{X=\,0}\right)\langle L_h \rangle &= 1 + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\label{eq:noregen1}
+    \implies \left(1 - \Pr{X=\,0}\right)\langle L_h \rangle &= 1 + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\nonumber\\
+	\implies \langle L_h \rangle &= \frac{m+1}{am}\bigg(1 + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\bigg)\label{eq:noregen1}
 \end{align}
 Now there are three cases to be considered.\\
 \textbf{Case:} $h = 1$
 \begin{align}
-	\langle L_1 \rangle = \frac{1}{1-\Pr{X=\,0}} = \frac{m+1}{am}
+	\langle L_1 \rangle = \frac{m+1}{am}
 \end{align}
 \textbf{Case:} $1 < h \leq m+1$
 \begin{align}
