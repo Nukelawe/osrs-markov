@@ -1,34 +1,50 @@
 #include "simulation.h"
+#include "mt_rand.h"
+#include <time.h>
+#include <stdio.h>
 
-void simulate(SimulationResult* r, FightParameters* p, long time) {
+int min(int a, int b) {
+	if (a > b) return b;
+	else return a;
+}
+
+/* generate a random integer in the interval [a, b] */
+long long rand(long long a, long long b) {
+	return a + genrand64_int63() % (b - a + 1);
+}
+
+void simulate(struct SimulationResult *r, struct FightParameters *p, long time) {
 	r->ticks = 0;
 	r->heals = 0;
 	r->damage = 0;
 	r->fights = 0;
 	// keep simulating fights until time limit is reached
 	clock_t begin = clock();
-    while (double(clock() - begin) / CLOCKS_PER_SEC * 1000 < time) {
+	int regenCooldown, attackCooldown, hp, ticks, heals, damage, hit;
+	double t;
+    while ((t = (double)(clock() - begin) / CLOCKS_PER_SEC * 1000) < time) {
 		r->fights++;
-        int regenCooldown  = GetRand(1, p->regenInterval);
-        int attackCooldown = p->attackInterval;
-        int hitpoints = p->maxHp;
-		int ticks  = 0;
-		int heals  = 0;
-		int damage = 0;
+        regenCooldown  = rand(1, p->regenInterval);
+        attackCooldown = p->attackInterval;
+        hp = p->maxHp;
+		ticks  = 0;
+		heals  = 0;
+		damage = 0;
 
-        while (hitpoints > 0) {
+        while (hp > 0) {
 			// next heal will occur before next hit
             if (regenCooldown < attackCooldown) {
 				ticks += regenCooldown;
 				attackCooldown -= regenCooldown;
                 regenCooldown = p->regenInterval;
-                hitpoints = min(hitpoints + 1, p->maxHp);
+				hp = min(hp + 1, p->maxHp);
+				++heals;
             }
 
 			// hit the enemy once
-            if (GetRandProbability() < p->accuracy) {
-                int hit = min(hitpoints, GetRand(0, p->maxHit));
-                hitpoints -= hit;
+            if (genrand64_real2() < p->accuracy) {
+                hit = min(hp, rand(0, p->maxHit));
+                hp -= hit;
                 damage += hit;
             }
 
@@ -41,29 +57,4 @@ void simulate(SimulationResult* r, FightParameters* p, long time) {
 		r->heals += heals;
 		r->damage += damage;
     }
-}
-
-
-double GetRandProbability() {
-    return (double)rand()/(RAND_MAX);
-}
-
-int GetRand(int minimum, int maximum) {
-    static int Init = 0;
-    if (Init == 0) {
-        /*
-         *  As Init is static, it will remember it's value between
-         *  function calls.  We only want srand() run once, so this
-         *  is a simple way to ensure that happens.
-         */
-        srand(time(NULL));
-        Init = 1;
-    }
-    /*
-    * Formula:
-    *    rand() % N   <- To get a number between 0 - N-1
-    *    Then add the result to min, giving you
-    *    a random number between min - max.
-    */
-    return rand()%(maximum-minimum+1) + minimum;
 }

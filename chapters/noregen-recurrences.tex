@@ -1,31 +1,86 @@
-\subsection{Recurrence relations}
-Inserting the transition probabilities into eq\ref{eq:fightLengthRecursion} gives
+Let a fight's length $L_j$ be the number of hits to kill an enemy with $j$ hitpoints remaining. Its expected value $\E{L_j}$ is of fundamential importance to the derivation of many other interesting quantities. We will now derive a recurrence relation for it using the fight model described in Chapter~\ref{chap:fightModel}.
+
+Let $\mathcal{S}_j^n$ be the set of all possible $n$-hit fights against an enemy with $j$ hitpoints remaining. The simplest possible case are the 1-hit fights $\mathcal{S}_j^1 = \{(j,0)\}$. The sets of all longer fights can be defined recursively by noticing that if the first hit lowers the hitpoints to $i$, the remaining sequence of states is equivalent to a fight of length $n-1$ against an enemy with $i$ hitpoints remaining. In other words
 \begin{align}
-    \langle L_h \rangle
-        &= 1 + \sum_{i=1}^h \Pr{X=\,h-i}\langle L_i\rangle\nonumber\\
-        &= 1 + \Pr{X=\,0}\langle L_h \rangle + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\nonumber\\
-    \implies \left(1 - \Pr{X=\,0}\right)\langle L_h \rangle &= 1 + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\nonumber\\
-	\implies \langle L_h \rangle &= \frac{m+1}{am}\bigg(1 + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\bigg)\label{eq:noregen1}
+	\mathcal{S}_j^n &=  \{j\} \times \bigcup_{i=1}^h \mathcal{S}_i^{n-1} \quad \mbox{for } n>1.\label{eq:fightRecursion}
 \end{align}
-Now there are three cases to be considered.\\
-\textbf{Case:} $h = 1$
+For the set of all 2-hit fights this gives $\mathcal{S}_j^2 = \{(j,h,0), (j,h-1,0), \ldots, (j,2,0), (j,1,0)\}$. Notice that eq\ref{eq:fightRecursion} also allows transitions in which the enemy hitpoints increase. This will be useful when regeneration is considered in Chapter~\ref{chap:regen}.
+
+Using the transition probabilities (eq\ref{eq:transitionProbabilities}) the probability that a particular $n$-hit fight $H \in \mathcal{S}_{j}^n$ occurs is
 \begin{align}
-	\langle L_1 \rangle = \frac{m+1}{am}
+    \Pr{H} &= \prod_{k=1}^{n} p_{H_{k} H_{k-1}}
 \end{align}
-\textbf{Case:} $1 < h \leq m+1$
-\begin{align}
-	\langle L_h \rangle
-		&= \frac{m + 1}{am} + \frac{m+1}{am} \sum_{i=1}^{h-1}\frac{a}{m+1}\langle L_{i} \rangle\nonumber\\
-		&= \langle L_{1} \rangle + \frac{1}{m} \sum_{i=1}^{h-1}\langle L_{i} \rangle\nonumber\\
-		&= \underbrace{\langle L_{1} \rangle + \frac{1}{m} \sum_{i=1}^{h-2}\langle L_{i} \rangle}_{\langle L_{h-1}\rangle} +\,\frac{1}{m}\langle L_{h-1} \rangle\nonumber\\
-		&= \frac{m+1}{m}\langle L_{h-1}\rangle\label{eq:geometricRecurrence}
+The probability of a 1-hit fight is now
+\begin{align}\label{eq:probabilityRecursion1hit}
+    \Pr{L_j = 1} &= \sum_{\mathclap{H \in \mathcal{S}_j^1}}\Pr{H}
+            = \Pr{(j,0}) = p_{0j}
 \end{align}
-\textbf{Case:} $h > m+1$
-\begin{align}
-    \langle L_h \rangle
-        &= \langle L_{1} \rangle + \frac{1}{m}\sum_{i=h-1-m}^{\mathclap{h-1}} \langle L_i \rangle\nonumber\\
-		&= \underbrace{\langle L_{1} \rangle + \frac{1}{m}\sum_{i=h-2-m}^{h-2} \langle L_i \rangle}_{\langle L_{h-1}\rangle} +\,\frac{1}{m}\langle L_{h-1} \rangle - \frac{1}{m}\langle L_{h-m-1} \rangle\nonumber\\
-    	&= \frac{m+1}{m}\langle L_{h-1} \rangle - \frac{1}{m}\langle L_{h-m-1} \rangle\nonumber\\
-		&= \frac{m+1}{m}\left(\langle L_{h-1} \rangle - \frac{1}{m+1}\langle L_{h-m-1} \rangle\right) \label{eq:complexRecurrence}
+For longer fights the probability is obtained by summing over all fights of length $n$ and invoking eq\ref{eq:fightRecursion}.
+\begin{align}\label{eq:probabilityRecursion}
+    \Pr{L_j = n} &= \sum_{\mathclap{H \in \mathcal{S}_j^n}}\Pr{H}
+            = \sum_{i=1}^h p_{ij} \sum_{H \in \mathcal{S}\mathrlap{_i^{n-1}}}\Pr{H}
+            = \sum_{i=1}^h p_{ij} \Pr{L_i = n-1}
 \end{align}
 
+The expected length of a fight can now be expressed as
+\begin{align}
+	\langle L_j \rangle &= \sum_{n=1}^{\infty}n\Pr{L_j=n}\nonumber\\
+       &= \Pr{L_j=1} + \sum_{n=2}^{\infty}n\sum_{i=1}^h p_{ij} \Pr{L_i=n-1}\nonumber\\
+       &= p_{0j} + \sum_{i=1}^h p_{ij} \sum_{n=2}^{\infty}n\Pr{L_i=n-1}.\label{eq:derivation2}
+\end{align}
+The inner sum can be worked out to be
+\begin{align}
+    \sum_{n=2}^{\infty}n\Pr{L_i=n-1}
+       &= \sum_{n=1}^{\infty}(n+1)\Pr{L_i=n} \nonumber\\
+	   &= \sum_{n=1}^{\infty}n\Pr{L_i=n} + \sum_{n=1}^{\infty}\Pr{L_i=n}\nonumber\\
+	   &= \langle L_i \rangle + 1.
+\end{align}
+In the last equality we used the definition of expected value as well as the fact that an enemy will be guaranteed to die if hit infinitely many times. Inserting this back into eq\ref{eq:derivation2} gives
+\begin{align}
+    \langle L_j \rangle
+        &= p_{0j} + \sum_{i=1}^h p_{ij}(\langle L_i \rangle+1)
+        = \sum_{i=0}^h p_{ij} + \sum_{i=1}^h p_{ij}\langle L_i \rangle
+\end{align}
+Since the transition probabilities must add up to 1 when summed over the entire state space, we have $\sum_{i=0}^{h}p_{ij} = 1$ and the recurrence relation for the expected length of a fight becomes
+\begin{align}
+	\langle L_j \rangle
+		= 1 + \sum_{i=1}^h p_{ij}\langle L_i \rangle.
+	\label{eq:fightLengthRecursion}
+\end{align}
+
+To compute the length of a fight from the recurrence (eq\ref{eq:fightLengthRecursion}) we need to know the transition probabilities. From the fight mechanics as stated in Chapter~\ref{chap:fightMechanics} we can determine the probability distribution of the accuracy-corrected damage roll $X$. This is the amount of damage that would be dealt if the enemy had enough hitpoints to receive it (i.e.\ without considering overkill).
+\begin{align}
+	\Pr{X = k} =
+	\begin{cases}
+		1 - \frac{am}{m+1}, &\mbox{if } k = 0 \\
+		\frac{a}{m+1},      &\mbox{if }1 \leq k \leq m\\
+		0,      			&\mbox{if }k > m
+	\end{cases}\label{eq:damageRollDistribution}
+\end{align}
+Here $a$ is the accuracy and $m$ the maximum hit as defined in Chapter~\ref{chap:fightMechanics}. In terms of eq\ref{eq:damageRollDistribution} the transition probabilities are given by
+\begin{align}
+    p_{ij}
+         &= \begin{cases}
+            \Pr{X=\,j-i} \quad &\mbox{if } i > 0 \\
+            \Pr{X\geq\,j-i} \quad &\mbox{if } i = 0
+        \end{cases}\label{eq:noregenProb}.
+\end{align}
+
+A nice feature of the transition probabilities for the regenerationless case is that the hitpoints can never increase because $p_{ij} = 0$ for $i > j$. In other words, it is impossible for the enemy hitpoints to climb up the state space. Thus, it makes no difference if the enemy being fought has full hitpoints or if some of them are already lost. In the absence of regeneration a fight against an enemy with $j$ hitpoints remaining is identical to a fight against an enemy whose maximum hitpoints \emph{are} $j$. Therefore, we can without loss of generality assume $j=h$ studying only fights that start at maximum hitpoints.
+
+With these remarks, the transition probabilities can be inserted to eq\ref{eq:fightLengthRecursion} to obtain
+\begin{align}
+	\E{L_h}
+		&= 1 + \sum_{i=1}^h \Pr{X=\,h-i}\E{L_i}\nonumber\\
+		&= 1 + \Pr{X=\,0}\langle L_h \rangle + \sum_{i=1}^{h-1} \Pr{X=\,h-i}\langle L_i \rangle\nonumber\\
+	\implies \frac{am}{m+1}\langle L_h \rangle
+		&= 1 + \frac{a}{m+1}\sum_{i=h-m}^{h-1} \E{L_i}\nonumber\\
+	\implies \langle L_h \rangle
+		&= \frac{m+1}{am} + \frac{1}{m}\sum_{i=\max(1,h-m)}^h \E{L_i}\label{eq:recurrencetemp}
+\end{align}
+To simplify the summation limits in eq\ref{eq:recurrencetemp} we define $\langle L_i \rangle = 0$ for $i \leq 0$. Finally, by reversing the order of summation we get the recurrence relation
+\begin{align}
+	\boxed{\E{L_h}
+		= \frac{m+1}{am} + \frac{1}{m}\sum_{i=1}^m \E{L_{h-i}}.
+	}\label{eq:noregenRecursion}
+\end{align}

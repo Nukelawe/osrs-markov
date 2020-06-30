@@ -1,2 +1,7 @@
+scrap
 *.aux
 *.log
+plots/*.png
+plots/*.pdf
+*.o
+*.h.gch

@@ -4,27 +4,41 @@
 \author{Nukelawe}
 \date{\today}
 \maketitle
-\input{chapters/introduction.tex}
-\input{chapters/fight-mechanics.tex}
+\section{Introduction}\label{chap:introduction}
+\input{chapters/introduction}
 
-\pagebreak
+\section{Fight mechanics}\label{chap:fightMechanics}
+\input{chapters/fight-mechanics}
+
 \section{No regeneration}\label{chap:noregen}
-\input{chapters/theory.tex}
-\input{chapters/noregen-probabilities}
-%\input{chapters/noregen-recurrences}
+\input{chapters/noregen-fight-model}
+\subsection{Expected length of a fight}\label{chap:noregenRecurrences}
+\input{chapters/noregen-recurrences}
+\subsection{Explicit solution}\label{chap:noregenSolution}
 \input{chapters/noregen-solution}
+\subsection{Asymptotic approximation}\label{chap:noregenAsymptotics}
 \input{chapters/noregen-asymptotics}
 
-\input{chapters/regen.tex}
-%\input{chapters/asymptotics.tex}
 \pagebreak
-\pagebreak
-\input{chapters/appendix.tex}
+\section{Regeneration}\label{chap:regen}
+\input{chapters/regen}
+\subsection{Regenerating random walker}\label{chap:regen-walker}
+\input{chapters/regen-random-walker}
+\subsection{Random healing cycle approximation}
+\input{chapters/regen-random-cycle}
+\subsection{Effective hitpoints approach}
+\input{chapters/regen-effhp}
 
-%\begin{thebibliography}{9}
-%	\bibitem{overkill_Nukelawe}
-%	http://imgur.com/aykEahg
-%
-%\end{thebibliography}
+\section{Kill and damage rates}
+\input{chapters/noregen-dph}
+
+\begin{thebibliography}{9}
+	\bibitem{overkill_Nukelawe}
+	http://imgur.com/aykEahg
+
+\end{thebibliography}
+
+%\pagebreak
+%\input{chapters/appendix.tex}
 
 \end{document}

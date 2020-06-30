@@ -9,10 +9,13 @@
 \usepackage{amssymb}
 \usepackage{cancel}
 \usepackage{empheq}
+\usepackage[bf]{caption} % For more control over figure captions
 \usepackage{tikz}
+\captionsetup{width=\textwidth}
+\counterwithin{figure}{section}
 \usetikzlibrary{positioning}
 \usepackage[top=0.7in, bottom=1in, left=1in, right=1in]{geometry}
-\newcommand\E[1]{\langle #1 \rangle}
+\newcommand\E[1]{\left\langle #1 \right\rangle}
 \renewcommand{\d}{\mathrm{d}}
 \renewcommand{\L}{\overline{L}}
 \renewcommand\Pr[1]{\begingroup
