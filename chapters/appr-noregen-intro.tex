@@ -1,0 +1,33 @@
+Let us first assume that there is no regeneration ($\rho = \frac{T_A}{T_R} = 0$), which is a sensible thing to do since most of the time $T_A \ll T_R$. This reduces the transition matrix into a triangular one making an exact analytic solution using forward substitution possible. The effects of overkill still remain which makes such an approximation interesting.
+
+We begin by restating the regenerationless transition probabilities
+\begin{align}
+	\pi_{i,j} = \begin{cases}
+		\Pr{X = i-j}, &\mbox{if } j > 0 \\
+		\Pr{X \geq i-j}, &\mbox{if } j = 0
+	\end{cases}
+\end{align}
+where
+\begin{align}
+	\Pr{X=n} = \begin{cases}
+		1 - \frac{am}{m+1}, &\mbox{if } n = 0 \\
+		\frac{a}{m+1},      &\mbox{if } 1 \leq n \leq m\\
+		0,      			&\mbox{if } n > m\ \mbox{or } n < 0.
+	\end{cases}
+\end{align}
+Obviously, $\E{R_i} = 0$ because there is no regeneration, so it suffices to find the expected length of a fight $\E{L_i}$. Note that since there is now no way for the remaining hitpoints of the enemy to transition upwards, a fight against an enemy with $i$ hitpoints remaining is equivalent to one against an enemy for which $i$ is the maximum hitpoints. Therefore, we can without loss of generality assume that the initial state is $h$.
+The now triangular transition matrix allows solving for $\E{L_i}$ recursively. To do this we write the matrix equation~(\ref{eq:fightLengthMatrix}) explicitly.
+\begin{align*}
+	\mathbf{1} &= (\mathbf{I} - \mathbf{Q})\mathbf{L}\\
+	\implies 1 &= \sum_{j=1}^h(\delta_{h,j} - \pi_{h,j})\E{L_j}\\
+		&= (1 - \pi_{h,h})\E{L_h} - \sum_{j=1}^{h-1} \pi_{h,j}\E{L_j}\\
+		&= \big(1 - \Pr{X=0}\big)\E{L_h} - \sum_{j=1}^{h-1} \Pr{X=h-j}\E{L_j}\\
+		&= \frac{am}{m+1}\E{L_h} - \sum_{j=h-m}^{h-1} \frac{a}{m+1}\E{L_j}\\
+	\implies \frac{am}{m+1}\E{L_h}
+		&= 1 + \frac{a}{m+1}\sum_{j=h-m}^{h-1} \E{L_j}
+\end{align*}
+To simplify the summation limits, we have defined $\E{L_i} = 0$ for $i \leq 0$. Finally, after reversing the order of summation and multiplying by $\frac{m+1}{am}$ the recurrence relation becomes
+\begin{align}
+	\E{L_h} = \E{L_1} + \frac{1}{m}\sum_{j=1}^m \E{L_{h-j}}\label{eq:noregenRecursion}
+\end{align}
+where $\E{L_1} = \frac{m+1}{am}$ as discussed in Chapter~\ref{chap:fightLength}.

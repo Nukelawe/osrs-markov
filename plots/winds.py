@@ -20,6 +20,26 @@ def Q(z, m):
         out += (m-i) * z**i
     return out
 
+def Dr(z, m, r):
+    return (m-r) - (m-r+1)*z + (1-r)*z**(m+1) + r*z**(m+2)
+
+def rootPlot():
+    rhos = np.arange(0,1,0.01)
+    rs = np.zeros(rhos.shape)
+    plt.clf()
+    for m in range(1,20):
+        d = np.zeros(m+3)
+        for irho,rho in enumerate(rhos):
+            d[m+2] = m-rho
+            d[m+1] = -(m+rho+1)
+            d[1] = 1-rho
+            d[0] = rho
+            roots = np.roots(d)
+            for root in roots:
+                if np.abs(root) < 1: rs[irho] = np.real(root)
+        plt.plot(rhos, rs)
+    plt.savefig('regenDominantRoot.pdf', bbox_inches='tight', pad_inches=0)
+
 plt.clf()
 plt.axvline(x=0,lw=0.1,color="k")
 plt.axhline(y=0,lw=0.1,color="k")
@@ -38,13 +58,15 @@ plt.plot(theta, np.abs(Q(gamma1, m)))
 plt.savefig('circle.pdf', bbox_inches='tight', pad_inches=0)
 
 plt.clf()
-d = np.zeros(m+2)
-d[m+1] = m
-d[m] = -(m+1)
-d[0] = 1
-q = np.zeros(m)
+d = np.zeros(m+3)
+r = 0.7
+d[m+2] = m-r
+d[m+1] = -(m-r+1)
+d[1] = 1-r
+d[0] = r
+q = np.zeros(m+2)
 for i in range(0, m): q[i] = i+1
-roots = np.roots(q)
+roots = np.roots(d)
 arg = np.arctan2(np.imag(roots), np.real(roots))
 for i,a in enumerate(arg):
     if a < 0: arg[i] = a + 2 * np.pi
@@ -54,7 +76,7 @@ mid = np.sum(roots)/N
 #plt.plot(np.real(mid), np.imag(mid), ls="none", marker="o")
 for j,i in enumerate(ind):
     line = [roots[i], roots[ind[(j+1+N)%N]]]
-    print(np.abs(line[0] - line[1]))
+    #print(np.abs(line[0] - line[1]))
     #plt.plot(np.real(line), np.imag(line), lw="0.5", color="b")
 plt.plot(np.real(roots), np.imag(roots), ls="none", marker="x")
 plt.plot(np.real(gamma1), np.imag(gamma1), lw=1.0, color="r")
@@ -67,8 +89,10 @@ plt.ylim((-r2, r2))
 plt.gca().set_aspect('equal', adjustable='box')
 x = y = np.arange(-r2, r2, 0.01)
 X, Y = np.meshgrid(x, y)
-Z = np.abs(Q(X + Y*1j, m))
+Z = np.abs(Dr(X + Y*1j, m, r))
 levels = np.arange(0,1,1/contours)*100
 plt.contour(X, Y, Z, levels, linewidths=0.2, colors="k")
 plt.savefig('roots.pdf', bbox_inches='tight', pad_inches=0)
 plt.savefig('roots.png', bbox_inches='tight', pad_inches=0)
+
+rootPlot()

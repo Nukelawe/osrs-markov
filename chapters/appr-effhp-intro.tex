@@ -1,0 +1,22 @@
+Effects of regeneration can be added to the no regeneration approximation relatively easily by noticing that a fight against an enemy with $h$ hitpoints is equivalent to one against an enemy with $h+R$ hitpoints and no regeneration, where $R$ is the number of hitpoints regenerated during the fight. Since the expected damage of a hit that does not kill the enemy is $\frac{am}{2}$, the expected number of hits it takes to lower the enemy hitpoints by the extra $R$ hitpoints is approximately $\frac{2R}{am}$. A naive attempt at approximating the effects of regeneration could be to assume that the same holds for the expectation:
+\begin{align}
+	\E{L} &\approx \E{L'} + \frac{2}{am}\E{R}
+\end{align}
+where $\E{L'}$ is the length of the fight assuming no regeneration.
+Now, applying the approximation $\E{R} \approx \rho\big(\E{L}-\frac{m+1}{am}\big)$ obtained in Chapter~\ref{chap:expectations} allows solving for $\E{L}$ in terms of its regenerationless counterpart $\E{L'}$.
+\begin{align*}
+	\E{L} &\approx \E{L'} + \frac{2\rho}{am}\Big(\E{L}-\frac{m+1}{am}\Big)\\
+	\implies \frac{am-2\rho}{am}\E{L} &\approx \E{L'} - \frac{2\rho}{am}\frac{m+1}{am}
+\end{align*}
+Multiplying both sides by $\frac{am}{am-2\rho} = \frac{1}{1-\frac{2\rho}{am}}$ gives
+\begin{equation}
+	\boxed{\E{L} \approx
+		\frac{1}{1-\frac{2\rho}{am}}\bigg(\E{L'} - \frac{2\rho(m+1)}{{(am)}^2}\bigg)
+	}\label{eq:Leffhp}
+\end{equation}
+from which the number of hitpoints regenerated can be calculated as
+\begin{equation}
+	\E{R} \approx \rho\Big(\E{L}-\frac{m+1}{am}\Big)\label{eq:Reffhp}.
+\end{equation}
+
+As a sanity check we note that if there is no regeneration and $\rho=0$, then $\E{L} = \E{L'}$ and $\E{R}=0$ as they should. The quantity $\frac{2\rho}{am}$ that appears in equation~\ref{eq:Leffhp} is called \emph{relative regeneration rate} as it can be understood as the ratio between the rates at which the enemy hitpoints are incremented ($\rho$) and decremented ($\frac{am}{2}$). A relative regeneration rate of 1 means that, on average, the enemy hitpoints stays the same and the only way for death to ever occur is through random fluctuations. In general, we expect the model to only give good results when $\frac{2\rho}{am} \ll 1$. In contrast to the regenerationless case, the accuracy dependency of $\E{L}$ can no longer be factored out, indicating that the number of hits and the number of \emph{successful} hits are no longer trivially related when regeneration is taken into account.

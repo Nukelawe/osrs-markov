@@ -1,0 +1,63 @@
+We define the \textit{state space} as the set of all possible values the remaining hitpoints of the enemy can have during a fight. For a fight against an enemy with $h$ maximum hitpoints this is $\{0,\ldots,h\}$. As each hit corresponds to a transition from one state to another we can think of the fight as a random walk in the state space that terminates in state 0. As an example consider a 4-hitpoint enemy that the attacker hits 3 times: first 1, then 0 and finally 3 damage, killing the enemy. This fight would be described by the sequence $4,3,3,0$ of visited states and corresponds to the highlighted path in the state space diagram in Figure~\ref{fig:stateSpace}.
+
+The probability of transitioning from state $i$ to state $j$ is called the \textit{transition probability} and defined as
+\begin{align}\label{eq:transitionProbabilities}
+    p_{i,j} = \Pr{H_k = j \mid H_{k-1} = i}
+\end{align}
+where $H_k$ is the number of hitpoints the enemy has remaining after $k$ hits. The $h+1$ wide square matrix $\mathbf{T}$ that has the transition probabilities as its elements is called the \emph{transition matrix}.
+\begin{equation}\label{eq:transitionMatrix}
+	\mathbf{T} =
+	\begin{pmatrix}
+		p_{0,0} & p_{0,1} & \cdots & p_{0,h}\\
+		p_{1,0} & p_{1,1} & \cdots & p_{1,h}\\
+		\vdots & \vdots & \ddots & \vdots\\
+		p_{h,0} & p_{h,1} & \cdots & p_{h,h}\\
+	\end{pmatrix}
+\end{equation}
+The $n$-step transition probability is the probability of transitioning from state $i$ to $j$ in $n$ steps, and we denote it by
+\begin{align}\label{eq:nstepTransitionProbabilities}
+	p_{i,j}^{(n)} = \Pr{H_k = j \mid H_{k-n} = i}.
+\end{align}
+It can be read off as the element $i,j$ of the transition matrix power $\mathbf{T}^n$, that is $p_{i,j}^{(n)} = [\mathbf{T}^n]_{i,j}$.
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[node distance=1cm]
+        \tikzstyle{state}=[shape=circle,draw,minimum size=1cm];
+        \coordinate (n0);
+        \xdef\scale{2}
+        \xdef\maxhit{3}
+        \foreach \s in {0,1,2,3,4} {
+            \node[shape=circle,draw](n\s) at (\scale*\s,0){$\s$};
+        }
+		\path[draw, color=magenta, line width=1mm] (n4) ..
+		controls({(0.75*4+0.25*3)*\scale},{2*(4-3-1)}) and ({(0.25*4+0.75*3)*\scale},{2*(4-3-1)})
+		.. (n3) ..
+        controls({(3-1.2)*\scale},-2) and ({(3+1.1)*\scale},-2)
+		.. (n3) ..
+		controls({(0.75*3+0.25*0)*\scale},{2*(3-0-1)}) and ({(0.25*3+0.75*0)*\scale},{2*(3-0-1)})
+		.. (n0);
+        \foreach \from in {0,1,2,3,4} {
+            \foreach \to in {0,1,2,3,4} {
+                \foreach \y [evaluate=\y as \yeval using \from-\to] in {1} {
+                \foreach \m [evaluate=\m as \meval using int(\to+\maxhit+1)] in {1} {
+                    \ifthenelse{\from>\to \AND \from<\meval \AND \to>0}{
+						\path[draw,-{Latex[width=2mm]}] (n\from) ..
+                        controls({(0.75*\from+0.25*\to)*\scale},{2*(\from-\to-1)}) and ({(0.25*\from+0.75*\to)*\scale},{2*(\from-\to-1)})
+                        .. node[above]{$p_{\to,\from}$} (n\to);
+                    }{}
+                    \ifthenelse{\to=0 \AND \from<\meval \AND \from>0}{
+                        \path[draw,-{Latex[width=2mm]}] (n\from) ..
+                        controls({(0.75*\from+0.25*\to)*\scale},{2*(\from-\to-1)}) and ({(0.25*\from+0.75*\to)*\scale},{2*(\from-\to-1)})
+                        .. node[above]{$p_{\to,\from}$} (n\to);
+                    }{}
+                    \ifthenelse{\from=\to}{
+                        \path[draw,-{Latex[width=2mm]}] (n\from) ..
+                        controls({(\to-1.2)*\scale},-2) and ({(\to+1.1)*\scale},-2) .. node[above]{$p_{\to,\from}$} (n\to);
+                    }{}
+                }
+                }
+            }
+        }
+    \end{tikzpicture}\caption{State space diagram for $m=3$, $h=4$ and no regeneration. The probability of moving from state $i$ to $j$ is given with the transition probability $p_{i,j}$. Only edges for which $p_{i,j} > 0$ are shown. The highlighted path corresponds to an example fight.}
+	\label{fig:stateSpace}
+\end{figure}

@@ -1,0 +1,21 @@
+Finally, we will briefly discuss another approximation for slow regeneration without going into too much detail. The convenience of the no regeneration assumption was ultimately based on the fact that it made the transition matrix triangular. The same can be accomplished by another, weaker assumption than abandoning regeneration altogether. To ensure that the enemy hitpoints never increase, it is enough to assume that a regeneration attempt never coincides with a hit that inflicts 0 damage.
+
+The transition probabilities in this case are
+\begin{equation}
+	p_{i,j} = \begin{cases}
+		\rho\pi_{i+1,j} + (1-\rho)\pi_{i,j},&\mbox{if } 0<j\leq i<h\\
+		\pi_{i,j},&\mbox{if } i=h\ \mbox{or}\ i=0\ \mbox{or}\ j>i
+	\end{cases}\label{eq:leastTriProbabilities}
+\end{equation}
+which yields the recurrence relation
+\begin{equation}
+	\E{L_i} = \frac{1}{m-\rho}\bigg(\frac{m+1}{a} + \sum_{j=1}^m \E{L_{i-j}} + \rho\E{L_{i-m-1}}\bigg)\label{eq:leastTriRecurrence}
+\end{equation}
+Although solving equation~\ref{eq:leastTriRecurrence} is significantly harder than without regeneration, it can still be done to a certain extent and at the very least it provides a computationally faster way to solve for the effects of regeneration. Just like in the regenerationless case we find that for small $h$ the fight's length follows a geometric progression:
+\begin{equation}
+	\E{L}
+		= \frac{m+1}{am}{\left(\frac{m-\rho+1}{m-\rho}\right)}^{h-1} \quad \mbox{if }h \leq m+1.
+	\label{eq:leastTriGeomL}
+\end{equation}
+
+The main disadvantage to this approximation is that the effective hitpoints argument is no longer straightforward to make. Combined with a significantly more difficult to solve recurrence relation, this approximation seems less appealing.

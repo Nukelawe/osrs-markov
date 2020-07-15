@@ -1,27 +1,39 @@
 \documentclass{article}
 \usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathdots}
 \usepackage{placeins}
 \usepackage{relsize,mathtools}
-\usepackage{amsthm}
-\usepackage{amsfonts}
 \usepackage{ifthen}
-\usepackage{mathdots}
-\usepackage{amssymb}
-\usepackage{cancel}
-\usepackage{empheq}
+\usepackage{mleftright}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{hyperref}
 \usepackage[bf]{caption} % For more control over figure captions
-\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{cancel} % term cancellations in math mode
+\usepackage{empheq}
+\usepackage{tikz} % for drawing vector graphics
+\usepackage{float}
 \captionsetup{width=\textwidth}
 \counterwithin{figure}{section}
 \usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta}
 \usepackage[top=0.7in, bottom=1in, left=1in, right=1in]{geometry}
+
 \newcommand\E[1]{\left\langle #1 \right\rangle}
 \renewcommand{\d}{\mathrm{d}}
-\renewcommand{\L}{\overline{L}}
 \renewcommand\Pr[1]{\begingroup
     \renewcommand\mid{\;|\;}
     \text{P({\larger[2]$\scriptstyle#1$})}
     \endgroup}
-\newtheorem{claim}{Claim}
 \numberwithin{equation}{section}
-
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=blue,
+	urlcolor=blue,
+	citecolor=black
+}

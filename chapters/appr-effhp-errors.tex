@@ -1,0 +1,31 @@
+Let us denote the relative error of quantity $X$ by
+\begin{align}
+	\delta X = \frac{X - X'}{X},
+\end{align}
+where the primed variable $X'$ stands for the approximation of $X$. To study how well the effective hitpoints approximation holds in various regions of the parameter space, we will now inspect the relative errors of the kill rate $v_k$ and the damage rate $v_d$. The true values of $\E{L}$ and $\E{R}$ needed for this comparison can be obtained by numerically solving the matrix equations~\ref{eq:fightLengthMatrix} and~\ref{eq:regenMatrix}.
+
+Figure~\ref{fig:mhErrors} shows how the relative errors of the rates $v_k$ and $v_d$ depend on $m$ and $h$ while keeping the other parameters $a$, $T_A$ and $T_R$ constant.
+First, we note that for both rates, the error is 0 for $h=1$ because enemies with 1 hitpoint cannot regenerate. In case of the damage rate $v_d$, the error also vanishes when $m=1$ because then there is no overkill and the expected damage per hit never changes no matter how long the fight lasts or how many hitpoints are regenerated.
+In the regions in which some error is present, the error is the largest near the origin where both $m$ and $h$ are small. This is particularly convenient since it is precisely in this region where the numerical solution to the exact Markov model is the fastest. There is currently no explanation for why the error seems to be higher on a blob around the main diagonal as well as on the line of slope $\frac{1}{2}$ intersecting the origin.
+\begin{figure}[t]
+	\centering
+    \includegraphics[scale=1]{plots/mhErrors.pdf}
+	\caption{Relative errors of the kill rate $v_k$ and the damage rate $v_d$ in the effective hitpoint approximation for various values of maximum hit and enemy hitpoints. The other relevant parameters $T_A=4$, $T_R=100$ and $a=0.5$ are held constant.}\label{fig:mhErrors}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[scale=1]{plots/arErrors.pdf}
+	\end{subfigure}
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[scale=1]{plots/arErrorLabels.pdf}
+	\end{subfigure}
+	\caption{Relative errors of the kill rate $v_k$ and damage rate $v_d$ in the effective hitpoint approximation as functions of the relative regeneration rate $\frac{2\rho}{am}$. The regeneration period is assumed to be $T_R=100$ in each fight. The parameters $a$, $m$, $h$ and $T_A$ for the fight scenarios were calculated using the \href{https://github.com/Palfore/OSRSmath}{OSRSmath}~\cite{osrsmath} python-library.}\label{fig:arErrors}
+\end{figure}
+\FloatBarrier
+Figure~\ref{fig:arErrors} shows the relative errors of the kill and damage rates against the relative regeneration rate for various enemy and attacker combinations. For simplicity, no boosts of any kind are considered, and the only gear used is a weapon. The errors are all below $1\,\%$ ($10^{-2}$), most even under $0.1\,\%$ ($10^{-3})$. They would in reality only get smaller as more offensive gear and other boosts are added.
+The reason why the relative error of the kill rate increases as the relative regeneration rate approaches 1 is that equation~\ref{eq:Leffhp} has a singularity at the point $\frac{2\rho}{am}=1$. However, most of the fight scenarios in Figure~\ref{fig:arErrors} have relative regeneration rates of less than 0.1 placing them far from the singularity. The only examples in which the relative regeneration rate is anywhere near 1 are the ridiculous ones where a player with level 10 attack and strength, equipped with an iron scimitar, is fighting a relatively strong enemy such as a hellhound. It is no surprise that for such fights regeneration is more significant.
+\FloatBarrier

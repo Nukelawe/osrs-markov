@@ -1,0 +1,100 @@
+Let the accuracy-corrected damage roll $X$ be the damage that would be dealt without considering overkill, or equivalently, on an enemy that had enough hitpoints to receive it. Using the fight mechanics presented in Chapter~\ref{chap:fightMechanics} its probability distribution can be worked out to be
+\begin{align}
+	\Pr{X=n} = \begin{cases}
+		1 - \frac{am}{m+1}, &\mbox{if } n = 0 \\
+		\frac{a}{m+1},      &\mbox{if } 1 \leq n \leq m\\
+		0,      			&\mbox{if } n < 0\ \mbox{or } m < n
+	\end{cases}\label{eq:damageRollDistribution}
+\end{align}
+where $a$ is the accuracy and $m$ the maximum hit. By also considering overkill we obtain the regenerationless transition probabilities:
+\begin{align}
+	\pi_{i,j} = \begin{cases}
+		\Pr{X = i-j}, &\mbox{if } j > 0 \\
+		\Pr{X \geq i-j}, &\mbox{if } j = 0
+	\end{cases}\label{eq:noregenTransitionProbabilities}.
+\end{align}
+
+When regeneration is considered there are two ways to transition from state $i$ to $j$. To lower the enemy hitpoints by $n$ one can either heal 0 and inflict $n$ damage, or heal 1 and inflict $n+1$ damage. Which one happens depends on whether there is a successful regeneration attempt between the hits. Let $\mathcal{R}_k$ be the event that a regeneration attempt occurs between the $(k-1)$th and the $k$th hits, and denote its complementary event by $\mathcal{R}_k^c$. Remembering that a regeneration attempt will only succeed if the enemy hitpoints are not full or zero we can write the transition probabilities as
+\begin{align}
+	\Pr{H_k = j \mid H_{k-1} = i} &= \begin{cases}
+		\Pr{\mathcal{R}_k}\pi_{i+1,j} + \Pr{\mathcal{R}_k^c}\pi_{i,j},&\mbox{if } 0<i<h\\
+		\pi_{i,j},&\mbox{if } i=h\ \mbox{or}\ i=0
+	\end{cases}.
+\end{align}
+
+To compute the probability $\Pr{\mathcal{R}_k}$ consider the time until the next regeneration attempt immediately after the $k$th hit and denote it by $t_k$. Then $t_0$ is the time until the first regeneration attempt at the beginning of the fight, $T_A$ ticks before the first hit. Since the initial state of the regeneration cycle is assumed to be unknown, $t_0$ is treated as a uniformly distributed random integer $t_0\sim U[0,T_R-1]$. Recall that $t_0$ can only be assumed an integer if $T_R$ is given in ticks (0.6 seconds). The $k$th hit occurs after $kT_A$ ticks from the beginning of the fight. Therefore,
+\begin{equation}\label{eq:regenDelay}
+	t_k = (t_0 - kT_A) \bmod{T_R}
+\end{equation}
+which is clearly also uniformly distributed $t_k \sim U[0,T_R-1]$. Now the probability that there is a regeneration attempt between the $(k-1)$th and the $k$th hit is
+\begin{align}
+	\rho = \Pr{\mathcal{R}_k}
+	= \Pr{t_{k-1}\,<\,T_A}
+	= \frac{T_A}{T_R}.
+\end{align}
+This number is called the \emph{regeneration attempt frequency} and can also be interpreted as the probability of regeneration in a model in which regeneration has a chance of occurring between any two hits. Remarkably, it also does not depend on the hit number $k$ at all, making the Markov process time-homogeneous.
+
+In the end, the transition probabilities can be written as
+\begin{align}\label{eq:specificTransitionProbabilities}
+	p_{i,j} &= \begin{cases}
+		\rho\pi_{i+1,j} + (1-\rho)\pi_{i,j},&\mbox{if } 0<i<h\\
+		\pi_{i,j},&\mbox{if } i=h\ \mbox{or}\ i=0
+	\end{cases}
+\end{align}
+and the corresponding transition matrix has the form
+\begin{align}\label{eq:transitionMatrixShape}
+	\mathbf{T} &=
+	\begin{pmatrix}
+		1 & \mathbf{0} \\
+		\mathbf{r} & \mathbf{Q}
+	\end{pmatrix}
+\end{align}
+where $\mathbf{0} = \big(0,\ldots,0\big)$ and $\mathbf{r}$ are a row vector and a column vector of length $h$, respectively, and $\mathbf{Q}$ is an $h$ by $h$ square matrix. Such a transition matrix is characteristic to an absorbing Markov chain. Its $n$th power, the elements of which are the $n$-step transition probabilities, is also easy to compute:
+\begin{align}
+	\mathbf{T}^n &=
+	\begin{pmatrix}
+		1 & \mathbf{0} \\
+		\big(\mathbf{I}+\mathbf{Q}+\mathbf{Q}^2+\cdots+\mathbf{Q}^n\big)\mathbf{r} & \mathbf{Q}^n
+	\end{pmatrix}
+\end{align}
+By carefully inserting different combinations of states into equation~\ref{eq:specificTransitionProbabilities}, the matrix $\mathbf{Q}$ can be observed to have the following \emph{almost} triangular form.
+\setcounter{MaxMatrixCols}{20}
+\begin{align}
+	\mathbf{Q} =
+	\begin{pmatrix}
+		p_{1,1} & p_{1,2} & \cdots & p_{1,h}\\
+		p_{2,1} & p_{2,2} & \cdots & p_{2,h}\\
+		\vdots & \vdots & \ddots & \vdots\\
+		p_{h,1} & p_{h,2} & \cdots & p_{h,h}\\
+	\end{pmatrix}
+	=
+	\begin{pmatrix}
+		\begin{matrix}
+			e_1&e_2\\
+			e_3&e_1&e_2\\
+			\vdots&\vdots&\vdots&\ddots\\
+			e_3&e_3&e_3&\cdots&e_2\\
+			e_3&e_3&e_3&\cdots&e_1&e_2\\
+			e_4&e_3&e_3&\cdots&e_3&e_1&e_2\\
+			   &e_4&e_3&\cdots&e_3&e_3&e_1&e_2\\
+			   &   &e_4&\cdots&e_3&e_3&e_3&e_1&e_2\\
+			   &   &   &\ddots&\vdots&\vdots&\vdots&\vdots&\vdots&\ddots\\
+			   &   &   &      &e_4&e_3&e_3&e_3&e_3&\cdots&e_2\\
+			   &   &   &      &   &e_4&e_3&e_3&e_3&\cdots&e_1&e_2
+		\end{matrix}\\
+		\begin{matrix}
+			&&&&&&&&
+		\end{matrix}\hspace{39pt}
+		\smash[b]{\underbrace{\begin{matrix}
+			e_3&e_3&e_3&\cdots&e_3&e_5
+		\end{matrix}}_m}
+	\end{pmatrix}
+\end{align}
+where
+\begin{align*}
+	&e_1 = \frac{\rho a}{m+1} + (1-\rho)\Big(1-\frac{ma}{m+1}\Big)
+	&e_2 = \rho\Big(1-\frac{ma}{m+1}\Big)\\
+	&e_3 = \frac{a}{m+1}
+	&e_4 = (1-\rho)\frac{a}{m+1}\\
+	&e_5 = 1-\frac{ma}{m+1}.
+\end{align*}

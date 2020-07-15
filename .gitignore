@@ -3,5 +3,11 @@ scrap
 *.log
 plots/*.png
 plots/*.pdf
+plots/__pycache__
 *.o
 *.h.gch
+*.bbl
+*.blg
+*.toc
+*.out
+

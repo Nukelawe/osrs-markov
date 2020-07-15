@@ -1,0 +1,16 @@
+Typically the expected values discussed in Chapter~\ref{chap:expectations} themselves are not the quantities of interest. Instead, the aim is often to optimize a rate quantity such as damage per second (DPS) or kills per hour. Such quantities can be easily expressed in terms of the expected values $\E{L}$ and $\E{R}$. Here we have dropped the index $i$ assuming initial state is $h$, i.e. $\E{L} \equiv \E{L_h}$. We will be using the same notation also in the later chapters.
+
+Consider a sequence of $n$ fights against identical enemies. If the length of the $i$th fight in this sequence is denoted by $L_i$ then the time taken by all the fights together is $T_A(L_1+\cdots+L_n)$. Likewise, if the hitpoints regenerated during the $i$th fight is denoted by $R_i$ then the total damage dealt is $nh + R_1+\cdots+R_n$. The \emph{kill rate} and \emph{damage rate} are defined as
+\begin{align}
+	v_k &= \lim\limits_{n\rightarrow\infty} \frac{n}{T_A(L_1 + \cdots + L_n)}
+		= \lim\limits_{n\rightarrow\infty} \frac{1}{T_A\overline{L_n}}\\
+	v_d &= \lim\limits_{n\rightarrow\infty} \frac{nh+R_1+\cdots+R_n}{T_A(L_1 + \cdots + L_n)}
+		= \lim\limits_{n\rightarrow\infty} \frac{h+\overline{R_n}}{T_A\overline{L_n}}
+\end{align}
+respectively, where $\overline{L_n} = \frac{1}{n}(L_1+\cdots+L_n)$ is the average number of hits to kill an enemy and $\overline{R_n} = \frac{1}{n}(R_1+\cdots+R_n)$ is the average hitpoints regenerated. Since both $L_i$ and $R_i$ are independent, identically distributed random variables, the law of large numbers implies that $\overline{L_n} \rightarrow \E{L}$ and $\overline{R_n} \rightarrow \E{R}$ as $n\rightarrow\infty$. Hence,
+\begin{align}
+	\boxed{v_k =
+		\frac{1}{T_A\E{L}} \quad\mbox{and}\quad v_d = \frac{h + \E{R}}{T_A\E{L}}.
+	}\label{eq:rates}
+\end{align}
+When $T_A$ is in seconds, $v_d$ is the DPS.

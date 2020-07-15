@@ -1,0 +1,7 @@
+In principle, the quantities $\E{L}$ and $\E{R}$ can now be solved from the matrix equations
+\begin{gather*}
+	(\mathbf{I} - \mathbf{Q})\mathbf{L} = \mathbf{1}
+	\quad\mbox{and}\quad
+	(\mathbf{I} - \mathbf{Q})\mathbf{R} = \rho\mathbf{1}_h
+\end{gather*}
+derived in Chapter~\ref{chap:markovModel}. However, doing so requires solving systems of $h$ linear equations, where $h$ is the maximum hitpoints. This can be difficult or slow in practice, especially when $h$ is large. In this chapter we will approximate the Markov process with certain simplifying assumptions.

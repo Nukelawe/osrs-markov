@@ -1,0 +1,64 @@
+\subsubsection{Number of visits}
+Let $N_{i,j}$ be the number of times the enemy has $j$ hitpoints during a fight that starts from $i$ hitpoints. The initial state is also counted, so for a fight that starts from full $h$ hitpoints and never regenerates back to $h$, $N_{h,h}$ is the number of zeros hit at the beginning of the fight. We define the indicator function $I_j^k$ such that, $I_j^k = 1$ if the enemy has $j$ hitpoints after the $k$th hit and $0$ otherwise. Now
+\begin{align}
+	N_{i,j} = \sum_{k\geq 0}I_j^k
+\end{align}
+and the expected number of visits to state $j$ is
+\begin{align}
+	\E{N_{i,j}}
+	= \E{\sum_{k\geq 0}I_j^k}
+	= \sum_{k\geq 0}\E{I_j^k}
+	= \E{I_j^0} + \sum_{k\geq 1}\E{I_j^k}
+	= \delta_{i,j} + \sum_{k\geq 1}p_{i,j}^{(k)}
+\end{align}
+where $\delta_{i,j} = 1$ if $i=j$ and 0 if $i\neq j$. Recall that $p_{i,j}^{(k)}$ is the element $i,j$ of the matrix $\mathbf{T}^k$, specifically its transient submatrix $\mathbf{Q}^k$ since we are only considering $i,j > 0$. This allows us to write $\E{N_{i,j}}$ as the element $i,j$ of $\mathbf{I} + \mathbf{Q} + \mathbf{Q}^2 + \cdots$, where $\mathbf{I}$ is the identity matrix of the appropriate shape. Since the enemy will eventually die if hit infinitelly many times, $p_{i,j}^{(k)} \rightarrow 0 \iff \mathbf{Q}^k \rightarrow \mathbf{0}$ as $k \rightarrow \infty$. Therefore the infinite matrix series can, analogously to the regular geometric series, be expressed as
+\begin{align}
+	\mathbf{I} + \sum_{k\geq 1}\mathbf{Q}^k
+	&= {(\mathbf{I} - \mathbf{Q})}^{-1}\nonumber\\
+	\implies \E{N_{i,j}} &= \big[{(\mathbf{I} - \mathbf{Q})}^{-1}\big]_{i,j}\label{eq:visitsMatrix}.
+\end{align}
+
+\subsubsection{Number of hits to kill}\label{chap:fightLength}
+Let a fight's length $L_i$ be the number of hits to kill an enemy that has $i$ hitpoints remaining. Then
+\begin{align}
+	L_i &= \sum_{j=1}^h N_{i,j}
+	\implies \E{L_i} = \sum_{j=1}^h \E{N_{i,j}}.
+\end{align}
+By defining the $h$-dimensional column vectors $\mathbf{L} = {\big(\E{L_1},\E{L_2},\ldots,\E{L_h}\big)}^T$ and $\mathbf{1} = {(1,1,\ldots,1)}^T$, and using equation~\ref{eq:visitsMatrix} this can be represented as a matrix equation
+\begin{gather}
+	(\mathbf{I} - \mathbf{Q})\mathbf{L} = \mathbf{1}\label{eq:fightLengthMatrix}
+\end{gather}
+which is equivalent to a linear system of $h$ equations. The important special case $h=1$ is particularly simple as it is unaffected by regeneration and the system of equations~(\ref{eq:fightLengthMatrix}) reduces to a single equation:
+\begin{align}
+	(1 - p_{1,1})\E{L_1} &= 1\nonumber\\
+	\implies \E{L_1} &= \frac{1}{1 - p_{1,1}}
+		= \frac{m+1}{am} \quad\mbox{if }h=1.\label{eq:L1}
+\end{align}
+
+\subsubsection{Number of hitpoints regenerated}
+The number of hitpoints $R_i$ regenerated during a fight against an enemy with $i$ hitpoints remaining can be obtained by counting the number of successful regeneration attempts. An attempt is successful if the enemy has neither full nor 0 hitpoints at the time the attempt occurs. Let $\mathcal{S}_k$ denote the event that there is a successful regeneration attempt between the $(k-1)$th and the $k$th hits. Then by linearity of expectation
+\begin{align}
+	\E{R_i}
+		&= \sum_{k\geq 0} \Pr{\mathcal{S}_k \mid H_0=i}\nonumber\\
+		&= \sum_{k\geq 0} \rho\sum_{j=1}^{h-1} p_{i,j}^{(k)}\nonumber\\
+		&= \rho\sum_{j=1}^{h-1}\Big(\delta_{i,j} + \sum_{k\geq 1} p_{i,j}^{(k)}\Big)\nonumber\\
+		&= \rho\sum_{j=1}^{h-1}\E{N_{i,j}}\label{eq:regenMatrixDerivation}
+\end{align}
+Just like we did for $\E{L_i}$, by defining the $h$-dimensional column vectors $\mathbf{R} = {\big(\E{R_1}, \E{R_2}, \ldots, \E{R_h}\big)}^T$ and $\mathbf{1}_h = {(1,1,\ldots,1,0)}^T$, equation~\ref{eq:regenMatrixDerivation} can be expressed in the matrix form
+\begin{gather}\label{eq:regenMatrix}
+	(\mathbf{I} - \mathbf{Q})\mathbf{R} = \rho\mathbf{1}_h.
+\end{gather}
+
+Additionally, from equation~\ref{eq:regenMatrixDerivation} we can derive a handy approximation for $\E{R_h}$. We begin by writing $\E{R_i}$ as
+\begin{align}
+	\E{R_i}
+		&= \rho\sum_{j=1}^{h-1}\E{N_{i,j}}
+		= \rho\bigg(\sum_{j=1}^{h}\E{N_{i,j}} - \rho\E{N_{i,h}}\bigg)\nonumber
+		= \rho\big(\E{L_i} - \E{N_{i,h}}\big)\label{eq:regenIntuitive}
+\end{align}
+Assume that the fight starts from full $h$ hitpoints and the damage rate is high enough compared to the regeneration rate, that once left, the state $h$ is never revisited. Then $\E{N_{h,h}}$ can be approximated as the expected number of hits before the state $h$ is left for the first time. This is equal to $\E{L_h}$ in the case when $h=1$, which was calculated to equal $\frac{m+1}{am}$. Therefore,
+\begin{align}
+	\boxed{\E{R_h}
+		\approx \rho\Big(\E{L_h} - \frac{m+1}{am}\Big)
+	}
+\end{align}
