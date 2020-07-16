@@ -16,6 +16,9 @@ main:
 simple:
 	pdflatex $(MAIN)
 
+main.png:
+	convert -density 300 $(MAIN).pdf -background white -quality 300 -colorspace RGB -alpha remove images/$(MAIN).png
+
 summary:
 	pdflatex $(SUMMARY).tex
 	convert -density 300 $(SUMMARY).pdf -background white -alpha remove $(SUMMARY).png
